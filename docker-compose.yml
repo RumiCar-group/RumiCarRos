@@ -1,0 +1,11 @@
+services:
+  main:
+    image: raspi_cross_ros2
+    volumes:
+      - ~/raspi:/raspi
+      - ~/raspi/usr/lib/gcc:/cross/lib/gcc
+      - ~/ros2_ws/install:/home/pi/ros2_ws/install
+      - ~/rc:/home/pi/ros/install
+      - .:/home/pi/ros/src/RumiCarRos
+    entrypoint: bash
+    working_dir: /home/pi/ros

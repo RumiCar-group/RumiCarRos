@@ -1,0 +1,3 @@
+[submodule "raspi_cross_ros2"]
+	path = raspi_cross_ros2
+	url = git@github.com:nyacpp/raspi_cross_ros2.git
