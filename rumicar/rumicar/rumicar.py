@@ -16,7 +16,7 @@ import time
 import pigpio
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Joy
+from geometry_msgs.msg import TwistStamped
 
 LEFT = 0
 CENTER = 1
@@ -37,6 +37,9 @@ SHDN2 = 25
 AIN_FREQUENCY = 490
 BIN_FREQUENCY = 960
 
+# factors
+SPEED_FACTOR = 1000000
+
 pi = pigpio.pi()
 pi.set_mode(AIN1, pigpio.OUTPUT)
 pi.set_mode(AIN2, pigpio.OUTPUT)
@@ -53,31 +56,37 @@ class RumiCar(Node):
 
     def __init__(self):
         super().__init__('rumicar')
-        self.subscription = self.create_subscription(
-            Joy,
-            'joy',
-            self.on_joy,
-            1)
+        self.last_twist = self.get_clock().now()
 
-    def on_joy(self, msg):
-        self.get_logger().info('Accel: %f, steer: %f' % (msg.axes[1], msg.axes[3]))
+        self.subscription = self.create_subscription(TwistStamped, 'cmd_vel', self.on_twist, 1)
+        self.timer = self.create_timer(0.1, self.on_timer)
 
-        if msg.axes[1] < 0:
+    def on_twist(self, message):
+        self.last_twist = self.get_clock().now()
+        self.get_logger().info('Accel: %f, Steer: %f' % (message.twist.linear.x, message.twist.angular.z))
+
+        if message.twist.linear.x < 0:
             pi.hardware_PWM(BIN1, BIN_FREQUENCY, 0)
-            pi.hardware_PWM(BIN2, BIN_FREQUENCY, int(-msg.axes[1] * 1000000))
+            pi.hardware_PWM(BIN2, BIN_FREQUENCY, int(-message.twist.linear.x * SPEED_FACTOR))
         else:
-            pi.hardware_PWM(BIN1, BIN_FREQUENCY, int(msg.axes[1] * 1000000))
+            pi.hardware_PWM(BIN1, BIN_FREQUENCY, int(message.twist.linear.x * SPEED_FACTOR))
             pi.hardware_PWM(BIN2, BIN_FREQUENCY, 0)
 
-        if msg.axes[3] < -0.5:
+        if message.twist.angular.z < -0.25:
             pi.set_PWM_dutycycle(AIN1, 255)
             pi.set_PWM_dutycycle(AIN2, 0)
-        elif msg.axes[3] > 0.5:
+        elif message.twist.angular.z > 0.25:
             pi.set_PWM_dutycycle(AIN1, 0)
             pi.set_PWM_dutycycle(AIN2, 255)
         else:
             pi.set_PWM_dutycycle(AIN1, 0)
             pi.set_PWM_dutycycle(AIN2, 0)
+
+    def on_timer(self):
+        now = self.get_clock().now()
+        if now - self.last_twist > rclpy.time.Duration(seconds=0.25):
+            pi.hardware_PWM(BIN1, BIN_FREQUENCY, 0)
+            pi.hardware_PWM(BIN2, BIN_FREQUENCY, 0)
 
 
 def main(args=None):

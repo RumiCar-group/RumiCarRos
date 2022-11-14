@@ -10,7 +10,7 @@ ssh pi@rcar.local
 * here and below user name is set to `pi` and host name to `rcar.local`.
 
 ## Build ROS2 for RasPi Zero
-Please, see the [**instruction**](raspi_cross_ros2).
+Please, see the [**instruction**](../raspi_cross_ros2/README.md).
 
 ## Configure Automatic Upload
 For convenience we mount `~/rc` directory, which mediates the automatic upload of the rumicar ros packages installation:
