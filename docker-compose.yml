@@ -4,8 +4,7 @@ services:
     volumes:
       - ~/raspi:/raspi
       - ~/raspi/usr/lib/gcc:/cross/lib/gcc
-      - ~/ros2_ws/install:/home/pi/ros2_ws/install
-      - ~/rc:/home/pi/ros/install
-      - .:/home/pi/ros/src/RumiCarRos
+      - ~/ros_humble/install:/home/pi/ros_humble/install
+      - ../..:/home/pi/rcar
     entrypoint: bash
-    working_dir: /home/pi/ros
+    working_dir: /home/pi/rcar

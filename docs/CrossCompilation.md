@@ -10,30 +10,32 @@ ssh pi@rcar.local
 * here and below user name is set to `pi` and host name to `rcar.local`.
 
 ## Build ROS2 for RasPi Zero
-Please, see the [**instruction**](../raspi_cross_ros2/README.md).
+Please, see the [**instruction**](https://github.com/nyacpp/raspi_cross_ros2).
+
+As a result you should have `~/raspi` with crosscompiler and  `~/ros_humble/install` with ros built inside.
 
 ## Configure Automatic Upload
-For convenience we mount `~/rc` directory, which mediates the automatic upload of the rumicar ros packages installation:
-* `docker:~/ros/install/`
-* (volume) → `~/rc/`
-* (sshfs) → `rcar.local:/home/pi/rc/`
+For convenience we mount `rcar_ros` directory, which is automatically updated with rumicar ros packages:
+* (build) → `docker:~/rcar/install/`
+* (volume) → `~/rcar/install/`
+* (sshfs) → `rcar.local:/home/pi/rcar_ros/`
 
-On the developer PC:
+The sshfs mount is done on the developer PC:
 ```
-mkdir ~/rc
-sshfs -o reconnect,follow_symlinks,allow_other pi@rcar.local:/home/pi/rc ~/rc
+mkdir -p ~/rcar/install
+sshfs -o reconnect,follow_symlinks,allow_other pi@rcar.local:/home/pi/rcar_ros ~/rcar/install
 ```
 
 ## Start Docker
 ```
-cd ~/ros/src/RumiCarRos
+cd ~/rcar/src/RumiCarRos
 docker compose run --rm main
 
 # --rm option removes the container on exit 
 ```
 
 ## Build All
-Docker starts in `~/ros` directory by default. The following command will build all the packages in that directory, which are `RumiCarRos` contents.
+Docker starts in `~/rcar` directory by default. The following command will build all the packages in that directory, which are `RumiCarRos` contents.
 
 ```
 pibuild
