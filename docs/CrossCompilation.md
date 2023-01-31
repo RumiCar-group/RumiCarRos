@@ -17,14 +17,7 @@ As a result you should have `~/raspi` with crosscompiler and  `~/ros_humble/inst
 ## Configure Automatic Upload
 For convenience we mount `rcar_ros` directory, which is automatically updated with rumicar ros packages:
 * (build) → `docker:~/rcar/install/`
-* (volume) → `~/rcar/install/`
 * (sshfs) → `rcar.local:/home/pi/rcar_ros/`
-
-The sshfs mount is done on the developer PC:
-```
-mkdir -p ~/rcar/install
-sshfs -o reconnect,follow_symlinks,allow_other pi@rcar.local:/home/pi/rcar_ros ~/rcar/install
-```
 
 ## Start Docker
 ```
@@ -35,8 +28,9 @@ docker compose run --rm main
 ```
 
 ## Build All
-Docker starts in `~/rcar` directory by default. The following command will build all the packages in that directory, which are `RumiCarRos` contents.
+Docker starts in `~/rcar` ROS workspace. The following command builds packages there (the arguments are passed to underlying `colcon build`).
 
 ```
-pibuild
+$ pibuild --packages-up-to rumicar
+$ pibuild  # to build all
 ```

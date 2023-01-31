@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# workaround docker volume from root to usual user
+sudo chown pi:pi /home/pi/ros_humble
+sudo chown pi:pi /home/pi/rcar
+
+# sync robot with install directory for automatic upload
+mkdir -p ~/rcar/install
+sshfs -o StrictHostKeyChecking=no,ServerAliveInterval=15,reconnect,transform_symlinks,allow_other pi@rcar.local:/home/pi/rcar_ros ~/rcar/install
+
+# execute CMD as last step
+exec "$@"

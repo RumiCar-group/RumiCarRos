@@ -5,6 +5,11 @@ services:
       - ~/raspi:/raspi
       - ~/raspi/usr/lib/gcc:/cross/lib/gcc
       - ~/ros_humble/install:/home/pi/ros_humble/install
-      - ../..:/home/pi/rcar
-    entrypoint: bash
+      - ~/rcar/src:/home/pi/rcar/src
     working_dir: /home/pi/rcar
+    entrypoint: /home/pi/rcar/src/RumiCarRos/docker/entrypoint
+    command: bash
+    devices:
+      - /dev/fuse
+    cap_add:
+      - SYS_ADMIN
