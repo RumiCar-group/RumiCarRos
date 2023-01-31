@@ -25,6 +25,9 @@ When packages are built (and uploaded), execute the following on the robot to st
 ros2 run rumicar rumicar
 ```
 
+## Joystick
+Please, check [**here**](rumi_teleop/README.md).
+
 ## Video
 
 This is an YouTube video for how this code works. -> [ROS2でRumiCarを遠隔操作/Remote control RumiCar by ROS2](https://youtu.be/bZCdvuuSebk)
