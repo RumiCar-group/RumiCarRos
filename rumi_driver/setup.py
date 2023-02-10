@@ -1,6 +1,7 @@
 from setuptools import setup
+from glob import glob
 
-package_name = 'rumicar'
+package_name = 'rumi_driver'
 
 setup(
     name=package_name,
@@ -9,6 +10,7 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', glob('launch/*.launch')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -18,7 +20,7 @@ setup(
     license='MIT',
     entry_points={
         'console_scripts': [
-            'rumicar = rumicar.rumicar:main',
+            'rumi_driver = rumi_driver.rumi_driver:main',
         ],
     },
 )

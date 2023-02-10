@@ -1,9 +1,5 @@
-# RumiCar driver
-
-## Subscriptions
+# RumiCar launch
 
 ```
-/cmd_vel [geometry_msgs::TwistStamped]
-    velocity: 0.0 ~ 1.0 (max)
-    steering: <0 = left, 0 = straight, >0 = right 
+ros2 launch rumicar main.launch
 ```

@@ -1,18 +1,15 @@
 /**:
   ros__parameters:
-    walk:
-      type: topic
-      interface_type: geometry_msgs/msg/TwistStamped
-      topic_name: cmd_vel
-      deadman_buttons: [4]
-      axis_mappings:
-        header-frame_id:
-          value: 'joy'
-        twist-linear-x:
-          axis: 1
-          scale: 1.0
-          offset: 0
-        twist-angular-z:
-          axis: 2
-          scale: 0.45
-          offset: 0
+    axis_linear:  # Left thumb stick vertical
+      x: 1
+    scale_linear:
+      x: 0.2
+    scale_linear_turbo:
+      x: 0.4
+    axis_angular:  # Left thumb stick horizontal
+      yaw: 2
+    scale_angular:
+      yaw: 0.45
+
+    enable_button: 6  # Left trigger button
+    enable_turbo_button: 7  # Right trigger button

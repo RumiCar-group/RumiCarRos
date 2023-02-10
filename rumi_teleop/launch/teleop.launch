@@ -1,6 +1,10 @@
+<!-- Please, run only on PC, because it introduces lag and message drops if run on the robot. -->
 <launch>
-    <node pkg="joy" exec="joy_node" name="joy"/>
-    <node pkg="joy_teleop" exec="joy_teleop" name="joy_teleop">
+    <node pkg="joy" exec="joy_node" name="remote_joy">
+        <param name="autorepeat_rate" value="0.0"/>
+    </node>
+
+    <node pkg="teleop_twist_joy" exec="teleop_node" name="teleop">
         <param from="$(find-pkg-share rumi_teleop)/config/teleop.yaml" allow_substs="true"/>
     </node>
 </launch>
