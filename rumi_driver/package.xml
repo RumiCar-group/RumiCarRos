@@ -3,14 +3,18 @@
 <package format="3">
   <name>rumi_driver</name>
   <version>0.0.0</version>
-  <description>RumiCar ROS2 base driver</description>
+  <description>RumiCar ROS2 driver</description>
   <maintainer email="akela1101@gmail.com">andrei</maintainer>
   <license>MIT</license>
 
-  <exec_depend>rclpy</exec_depend>
-  <exec_depend>geometry_msgs</exec_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <build_depend>rclcpp</build_depend>
+  <build_depend>libgpiod-dev</build_depend>
+  <build_depend>pkg-config</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
 
   <export>
-    <build_type>ament_python</build_type>
+    <build_type>ament_cmake</build_type>
   </export>
 </package>

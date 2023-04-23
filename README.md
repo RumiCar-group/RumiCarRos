@@ -7,6 +7,14 @@ cd ~/rcar/src
 git clone --recursive <url>/RumiCarRos.git
 ```
 
+## Dependencies
+The driver uses `gpiod` and `sysfs` to control the motors with minimum CPU consumption. But in this case `pigpio` should be turned off and maybe uninstalled.
+```
+sudo systemctl stop pigpiod
+sudo systemctl disable pigpiod
+sudo apt remove pigpiod
+```
+
 ## Build
 For building on RasPi Zero, you need to do [**cross-compilation**](docs/CrossCompilation.md).
 
@@ -23,6 +31,9 @@ When packages are built (and uploaded), execute the following on the robot to st
 ```
 . rcar_ros/setup.bash
 ros2 run rumicar rumicar
+
+# or same plus joystick connected to robot
+ros2 launch rumicar main.launch
 ```
 
 ## Joystick

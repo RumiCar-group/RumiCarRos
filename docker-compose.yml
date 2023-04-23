@@ -1,6 +1,7 @@
 services:
   main:
     image: raspi_cross_ros2
+    build: raspi_cross_ros2
     volumes:
       - ~/raspi:/raspi
       - ~/raspi/usr/lib/gcc:/cross/lib/gcc
