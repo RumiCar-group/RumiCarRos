@@ -16,7 +16,7 @@ RumiPwm::RumiPwm()
     write("export", 0);
     write("export", 1);
 
-    usleep(100'000);  // uncertain way to know that pin created
+    usleep(300'000);  // uncertain way to know that pin created
 }
 
 RumiPwm::~RumiPwm()

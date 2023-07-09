@@ -76,7 +76,7 @@ private:
     {
         auto twist = std::make_shared<geometry_msgs::msg::Twist>();
         twist->linear.x = message->axes[1] * 0.3;  // max 30%
-        twist->angular.z = message->axes[2];
+        twist->angular.z = message->axes[3];
         onTwist(twist);
     }
 };
