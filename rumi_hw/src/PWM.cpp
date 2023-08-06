@@ -1,7 +1,7 @@
 #include <fstream>
 #include <unistd.h>
 
-#include <rumi_pwm.hpp>
+#include <rumi_hw/PWM.hpp>
 
 const std::string prefix = "/sys/class/pwm/pwmchip0/";
 

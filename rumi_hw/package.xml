@@ -1,0 +1,14 @@
+<package format="3">
+  <name>rumi_hw</name>
+  <version>0.0.0</version>
+  <description>RumiCar HW library</description>
+  <maintainer email="akela1101@gmail.com">andrei</maintainer>
+  <license>MIT</license>
+
+  <build_depend>libgpiod-dev</build_depend>
+  <build_depend>pkg-config</build_depend>
+
+  <export>
+    <build_type>cmake</build_type>
+  </export>
+</package>

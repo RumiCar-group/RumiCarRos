@@ -1,11 +1,7 @@
 #include <gpiod.h>
-#include <error.h>
-#include <stdlib.h>
-#include <cstdio>
-#include <cstring>
 #include <stdexcept>
 
-#include <rumi_gpio.hpp>
+#include <rumi_hw/GPIO.hpp>
 
 gpiod_line_request_config outConfig = {
     .consumer = "blink",
@@ -14,7 +10,7 @@ gpiod_line_request_config outConfig = {
 };
 
 RumiGpio::RumiGpio(std::string devPath)
-        : path(move(devPath))
+        : path(std::move(devPath))
         , chip(gpiod_chip_open(path.data()))
 {
     if (path.size() == 0)
@@ -50,12 +46,12 @@ void RumiGpio::acquirePin(uint offset)
     gpiod_line* line = gpiod_chip_get_line(chip, offset);
     if (!line)
     {
-        throw std::runtime_error("Failed to get pin: " + offset);
+        throw std::runtime_error("Failed to get pin: " + std::to_string(offset));
     }
 
     if (int error = gpiod_line_request(line, &outConfig, 0))
     {
-        throw std::runtime_error("Failed to request pin " + offset);
+        throw std::runtime_error("Failed to request pin " + std::to_string(offset));
     }
     lines.emplace(offset, line);
 }
