@@ -1,5 +1,9 @@
-# RumiCar launch
+# RumiCar system files
+
+## Autostart
+Put `systemd/rcar.service` to `~/.config/systemd/user/rcar.service` and enable it:
 
 ```
-ros2 launch rumicar main.launch
+systemctl --user enable rcar.service
+systemctl --user start rcar.service
 ```

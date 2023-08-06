@@ -1,0 +1,10 @@
+[Unit]
+Description=RumiCar driver
+
+[Service]
+Type=simple
+StandardOutput=journal
+ExecStart=/home/pi/rcar_ros/bin/rcar_startup
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+. ~/rcar_ros/setup.bash
+ros2 launch rumicar main.launch
