@@ -1,6 +1,6 @@
 services:
   main:
-    image: raspi_cross_ros2
+    image: nyacpp/raspi_cross_ros2
     build: raspi_cross_ros2
     volumes:
       - ~/raspi:/raspi
