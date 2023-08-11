@@ -5,40 +5,37 @@
 #include <sensor_msgs/msg/joy.hpp>
 #include <sensor_msgs/msg/battery_state.hpp>
 
+#include <rumi_hw/DRV8835.hpp>
 #include <rumi_hw/GPIO.hpp>
-#include <rumi_hw/PWM.hpp>
 #include <rumi_hw/MCP3002.hpp>
+#include <rumi_hw/PWM.hpp>
 
 using namespace std::chrono_literals;
 
 class RumiDriver : public rclcpp::Node
 {
+    std::vector<int> batteryLedPins;
+    std::vector<double> batteryLedVoltages;
+
     RumiGpio gpio;
     RumiPwm pwm;
     MCP3002 batterySpi;
-    std::vector<int64_t> steeringPins;
-    std::vector<int64_t> batteryLedPins;
-    std::vector<double> batteryLedVoltages;
+    DRV8835 driveController;
 
     std::vector<rclcpp::SubscriptionBase::SharedPtr> subscribers;
     rclcpp::Publisher<sensor_msgs::msg::BatteryState>::SharedPtr batteryPublisher;
     rclcpp::TimerBase::SharedPtr batteryTimer;
 
 public:
-    RumiDriver() : Node("rumi_driver"), batterySpi(0, 0)
+    RumiDriver() : Node("rumi_driver")
+            , batteryLedPins(declareInts("battery_led_pins", {5, 6, 16, 20, 21}))
+            , batteryLedVoltages(declare_parameter("battery_led_voltages", std::vector<double>({3.2, 3.4, 3.6, 3.8})))
+            , batterySpi(0, 0)
+            , driveController(gpio, pwm,
+                      declareInts("drive_gpios", {17, 27, 26, 22}),
+                      declareInts("drive_pwms", {0}),
+                      static_cast<int>(declare_parameter("drive_pwm_frequency", 36)))
     {
-        steeringPins = declare_parameter("steering_pins", std::vector<int64_t>({17, 27}));
-        batteryLedPins = declare_parameter("battery_led_pins", std::vector<int64_t>({5, 6, 16, 20, 21}));
-        batteryLedVoltages = declare_parameter("battery_led_voltages", std::vector<double>({2.8, 3.2, 3.4, 3.6}));
-        auto drivePwmFrequency = static_cast<int>(declare_parameter("drive_pwm_frequency", 36));
-
-        for (int i = 0; i < 2; ++i)
-        {
-            pwm.setFrequency(i, drivePwmFrequency);
-            pwm.setDuty(i, 0);
-            pwm.toggle(i, true);
-        }
-
         subscribers.push_back(create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 1,
                     [this](const geometry_msgs::msg::Twist::ConstSharedPtr& message) { onTwist(message); }));
         subscribers.push_back(create_subscription<sensor_msgs::msg::Joy>("joy", 1,
@@ -49,10 +46,24 @@ public:
         {
             batteryTimer = create_wall_timer(1s, [this] { onBatteryTimer(); });
         }
-        RCLCPP_INFO(get_logger(), "Start");
+        RCLCPP_INFO(get_logger(), "Initialized");
+    }
+
+    ~RumiDriver() override
+    {
+        for (long batteryLedPin : batteryLedPins)
+        {
+            gpio.togglePin(batteryLedPin, false);
+        }
     }
 
 private:
+    std::vector<int> declareInts(const std::string& param, const std::vector<int>& defaults)
+    {
+        auto ints64 = declare_parameter(param, defaults);
+        return {ints64.begin(), ints64.end()};
+    }
+
     void onBatteryTimer()
     try
     {
@@ -60,7 +71,7 @@ private:
         state.header.stamp = this->now();
         state.voltage = batterySpi.get();
         state.current = state.charge = state.capacity = state.design_capacity = NAN;
-        state.percentage = (state.voltage - 2.f) / (4.2f - 2.f);
+        state.percentage = (state.voltage - 2.f) / (4.2f - 3.f);
         state.power_supply_technology = sensor_msgs::msg::BatteryState::POWER_SUPPLY_TECHNOLOGY_NIMH;
         state.present = true;
         batteryPublisher->publish(state);
@@ -86,37 +97,7 @@ private:
     void onTwist(const geometry_msgs::msg::Twist::ConstSharedPtr& message)
     try
     {
-        if (message->linear.x < -0.15)
-        {
-            pwm.setDuty(0, 0);
-            pwm.setDuty(1, -message->linear.x);
-        }
-        else if (message->linear.x > 0.15)
-        {
-            pwm.setDuty(0, message->linear.x);
-            pwm.setDuty(1, 0);
-        }
-        else
-        {
-            pwm.setDuty(0, 0);
-            pwm.setDuty(1, 0);
-        }
-
-        if (message->angular.z < -0.2)
-        {
-            gpio.togglePin(steeringPins[0], true);
-            gpio.togglePin(steeringPins[1], false);
-        }
-        else if (message->angular.z > 0.2)
-        {
-            gpio.togglePin(steeringPins[0], false);
-            gpio.togglePin(steeringPins[1], true);
-        }
-        else
-        {
-            gpio.togglePin(steeringPins[0], false);
-            gpio.togglePin(steeringPins[1], false);
-        }
+        driveController.drive(message->linear.x, message->angular.z);
     }
     catch (const std::exception& ex) {}
 

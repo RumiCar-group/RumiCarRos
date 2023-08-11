@@ -1,0 +1,5 @@
+/**:
+  ros__parameters:
+    drive_gpios: [ 17, 27 ]
+    drive_pwms: [ 0, 1 ]
+    drive_pwm_frequency: 36

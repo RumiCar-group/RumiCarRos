@@ -27,7 +27,7 @@ Allows to control the robot and get its status.
 ~/battery_led_pins: (int[], default: [ 5, 6, 16, 20, 21 ])
     gpio pins for battery indication
     
-~/battery_led_voltages: (float[], default: [ 2.8, 3.2, 3.4, 3.6 ])
+~/battery_led_voltages: (float[], default: [ 3.2, 3.4, 3.6, 3.8 ])
     [V] battery voltages for each pin after the first
      
 ~/drive_pwm_frequency: (int, default: 36)
