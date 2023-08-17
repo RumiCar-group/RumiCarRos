@@ -1,0 +1,6 @@
+# Windows
+Thumbs.db
+# Apple
+.DS_Store
+# KDE
+.directory
