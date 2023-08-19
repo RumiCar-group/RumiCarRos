@@ -8,6 +8,16 @@ git clone --recursive <url>/RumiCarRos.git
 ```
 
 ## Dependencies
+### On development PC
+Try [rosdep](https://docs.ros.org/en/humble/Tutorials/Intermediate/Rosdep.html). After it's installed, run:
+```
+cd ~/rcar
+rosdep install --from-paths src -y --ignore-src
+```
+
+### On RumiCar
+Install needed runtime dependencies manually.
+
 The driver uses `gpiod` and `sysfs` to control the motors with minimum CPU consumption. But in this case `pigpio` should be turned off and maybe uninstalled.
 ```
 sudo systemctl stop pigpiod

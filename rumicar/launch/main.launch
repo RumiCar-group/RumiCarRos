@@ -2,8 +2,4 @@
     <node pkg="rumi_driver" exec="rumi_driver" name="driver">
         <param from="$(find-pkg-share rumi_driver)/config/driver.yaml" allow_substs="true"/>
     </node>
-
-    <node pkg="joy" exec="joy_node" name="joy">
-        <param name="autorepeat_rate" value="0.0"/>
-    </node>
 </launch>

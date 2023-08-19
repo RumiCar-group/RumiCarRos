@@ -1,3 +1,6 @@
+#include <rumi_hw/GPIO.hpp>
+#include <rumi_hw/PWM.hpp>
+
 #include <rumi_hw/DRV8835.hpp>
 
 

@@ -5,6 +5,7 @@
 #include <sensor_msgs/msg/joy.hpp>
 #include <sensor_msgs/msg/battery_state.hpp>
 
+#include <rumi_hw/Beeper.hpp>
 #include <rumi_hw/DRV8835.hpp>
 #include <rumi_hw/GPIO.hpp>
 #include <rumi_hw/MCP3002.hpp>
@@ -15,12 +16,14 @@ using namespace std::chrono_literals;
 class RumiDriver : public rclcpp::Node
 {
     std::vector<int> batteryLedPins;
-    std::vector<double> batteryLedVoltages;
+    std::vector<float> batteryLedVoltages;
+    float minVoltage = 0, maxVoltage = 1;
 
     RumiGpio gpio;
     RumiPwm pwm;
     MCP3002 batterySpi;
     DRV8835 driveController;
+    Beeper beeper;
 
     std::vector<rclcpp::SubscriptionBase::SharedPtr> subscribers;
     rclcpp::Publisher<sensor_msgs::msg::BatteryState>::SharedPtr batteryPublisher;
@@ -29,12 +32,13 @@ class RumiDriver : public rclcpp::Node
 public:
     RumiDriver() : Node("rumi_driver")
             , batteryLedPins(declareInts("battery_led_pins", {5, 6, 16, 20, 21}))
-            , batteryLedVoltages(declare_parameter("battery_led_voltages", std::vector<double>({3.2, 3.4, 3.6, 3.8})))
+            , batteryLedVoltages(declareFloats("battery_led_voltages", {3.0, 3.2, 3.4, 3.6, 3.8, 4.0}))
             , batterySpi(0, 0)
             , driveController(gpio, pwm,
                       declareInts("drive_gpios", {17, 27, 26, 22}),
                       declareInts("drive_pwms", {0}),
                       static_cast<int>(declare_parameter("drive_pwm_frequency", 36)))
+            , beeper(pwm, static_cast<int>(declare_parameter("beeper_pwm", 1)))
     {
         subscribers.push_back(create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 1,
                     [this](const geometry_msgs::msg::Twist::ConstSharedPtr& message) { onTwist(message); }));
@@ -45,6 +49,11 @@ public:
         if (!batteryLedPins.empty())
         {
             batteryTimer = create_wall_timer(1s, [this] { onBatteryTimer(); });
+        }
+        if (batteryLedVoltages.size() > 1)
+        {
+            minVoltage = batteryLedVoltages.front();
+            maxVoltage = batteryLedVoltages.back();
         }
         RCLCPP_INFO(get_logger(), "Initialized");
     }
@@ -64,6 +73,12 @@ private:
         return {ints64.begin(), ints64.end()};
     }
 
+    std::vector<float> declareFloats(const std::string& param, const std::vector<float>& defaults)
+    {
+        auto doubles = declare_parameter(param, defaults);
+        return {doubles.begin(), doubles.end()};
+    }
+
     void onBatteryTimer()
     try
     {
@@ -71,7 +86,7 @@ private:
         state.header.stamp = this->now();
         state.voltage = batterySpi.get();
         state.current = state.charge = state.capacity = state.design_capacity = NAN;
-        state.percentage = (state.voltage - 2.f) / (4.2f - 3.f);
+        state.percentage = (state.voltage - minVoltage) / (maxVoltage - minVoltage);
         state.power_supply_technology = sensor_msgs::msg::BatteryState::POWER_SUPPLY_TECHNOLOGY_NIMH;
         state.present = true;
         batteryPublisher->publish(state);
@@ -82,7 +97,7 @@ private:
 
     void updateLED(float voltage)
     {
-        int count = 1;
+        int count = 0;
         for (double ledVoltage: batteryLedVoltages)
         {
             if (voltage < ledVoltage) break;
@@ -108,6 +123,8 @@ private:
         twist->linear.x = message->axes[1] * 0.3;  // max 30%
         twist->angular.z = message->axes[3];
         onTwist(twist);
+
+        beeper.beep(100 + 50 * message->axes[5], message->axes[5] < 0.99 ? 0.1 : 0.0);
     }
 };
 

@@ -20,16 +20,25 @@ Allows to control the robot and get its status.
 ```
 
 ## Parameters
-```
-~/steering_pins: (int[], default: [ 17, 27 ])
-    gpio pins used for steering left and right
-    
-~/battery_led_pins: (int[], default: [ 5, 6, 16, 20, 21 ])
+```    
+~/battery_led_pins: (int[])
     gpio pins for battery indication
     
-~/battery_led_voltages: (float[], default: [ 3.2, 3.4, 3.6, 3.8 ])
-    [V] battery voltages for each pin after the first
-     
-~/drive_pwm_frequency: (int, default: 36)
+~/battery_led_voltages: (float[])
+    [V] battery voltages from min to max
+   
+~/drive_gpios: (int[])
+    gpio pins for driving
+    PhEn => LR_SELECT, STEER_ON, DRIVE_ON, FORWARD_ON
+    InIn => LEFT, RIGHT
+    
+~/drive_pwms: (int[])
+    pwm indexes used for drive motor (either 0 for PhEn or 0,1 for InIn)
+      
+~/drive_pwm_frequency: (int)
     [Hz] PWM frequency for drive motor (lower - lower speeds, higher - smoother movement)
+
+~/beeper_pwm: (int)
+    PWM index used for beeper (-1 to disable)
 ```
+

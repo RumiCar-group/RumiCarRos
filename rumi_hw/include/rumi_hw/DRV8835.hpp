@@ -3,9 +3,6 @@
 #include <vector>
 #include <stdexcept>
 
-#include "GPIO.hpp"
-#include "PWM.hpp"
-
 
 class RumiGpio;
 class RumiPwm;
