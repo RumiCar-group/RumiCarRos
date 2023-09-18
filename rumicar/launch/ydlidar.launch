@@ -1,0 +1,12 @@
+<launch>
+    <node pkg="ydlidar_ros2_driver" exec="ydlidar_ros2_driver_node" name="ydlidar_ros2_driver_node" output="screen">
+        <param from="$(find-pkg-share ydlidar_ros2_driver)/params/TminiPro.yaml" allow_substs="true"/>
+        <param name="port" value="/dev/serial0"/>
+        <param name="frequency" value="9.6"/>  <!-- actually publishes 10.0 Hz -->
+        <param name="reversion" value="false"/>
+    </node>
+
+    <node pkg="tf2_ros" exec="static_transform_publisher" name="base_lidar_tf"
+          args="0.038 0 0.045 0 0 0 base_link laser_frame"
+    />
+</launch>
