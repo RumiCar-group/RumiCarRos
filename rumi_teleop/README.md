@@ -1,8 +1,6 @@
 # RumiCar Teleoperation
 
-The robot already runs `joy` node for attaching joystick directly. 
-
-Proceed below only if you connect joystick to remote PC instead.
+Proceed below if you connect joystick to remote PC.
 
 ## Build
 ```

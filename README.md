@@ -25,6 +25,11 @@ sudo systemctl disable pigpiod
 sudo apt remove pigpiod
 ```
 
+PWM for 13 and 18 pins should be enabled in `/boot/config.txt`:
+```
+dtoverlay=pwm-2chan,pin=18,func=2,pin2=13,func2=4
+```
+
 ## Build
 For building on RasPi Zero, you need to do [**cross-compilation**](docs/CrossCompilation.md).
 
@@ -39,10 +44,10 @@ $ pibuild --packages-up-to rumicar
 When packages are built (and uploaded), execute the following on the robot to start the driver:
 
 ```
-. rcar_ros/setup.bash
-ros2 run rumicar rumicar
+. rcar/install/setup.bash
+ros2 run rumi_driver rumi_driver
 
-# or same plus joystick connected to robot
+# or
 ros2 launch rumicar main.launch
 ```
 
@@ -54,3 +59,21 @@ Please, check [**here**](rumi_teleop/README.md).
 This is an YouTube video for how this code works. -> [ROS2でRumiCarを遠隔操作/Remote control RumiCar by ROS2](https://youtu.be/bZCdvuuSebk)
 
 [![ROS2でRumiCarを遠隔操作/Remote control RumiCar by ROS2](http://img.youtube.com/vi/bZCdvuuSebk/0.jpg)](https://youtu.be/bZCdvuuSebk "ROS2でRumiCarを遠隔操作/Remote control RumiCar by ROS2")
+
+## Ubuntu Specific
+
+Raspi Config is not preinstalled:
+```
+sudo apt-get install raspi-config
+```
+
+The path to `/boot/config.txt` is `/boot/firmware/config.txt`.
+
+Udev rules need to be added manually: https://github.com/dotnet/iot/blob/main/Documentation/raspi-pwm.md
+
+Fix the "System is booting up. Unprivileged users are not permitted to log in yet.": 
+```
+sudo nano /etc/pam.d/login
+# comment out:  auth  requisite  pam_nologin.so
+```
+

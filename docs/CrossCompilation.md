@@ -15,9 +15,9 @@ Please, see the [**instruction**](https://github.com/nyacpp/raspi_cross_ros2).
 As a result you should have `~/raspi` with crosscompiler and  `~/ros_humble/install` with ros built inside.
 
 ## Configure Automatic Upload
-For convenience we mount `rcar_ros` directory, which is automatically updated with rumicar ros packages:
+For convenience we mount `rcar/install` directory, which is automatically updated with rumicar ros packages:
 * (build) → `docker:~/rcar/install/`
-* (sshfs) → `rcar.local:/home/pi/rcar_ros/`
+* (sshfs) → `rcar.local:/home/pi/rcar/install/`
 
 ## Start Docker
 ```
