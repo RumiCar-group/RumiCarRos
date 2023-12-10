@@ -1,4 +1,11 @@
+<!-- Model with YDLidar on top -->
 <launch>
+    <!-- base controller dirver -->
+    <node pkg="rumi_driver" exec="rumi_driver" name="driver">
+        <param from="$(find-pkg-share rumi_driver)/config/driver.yaml" allow_substs="true"/>
+    </node>
+
+    <!-- lidar driver -->
     <node pkg="ydlidar_ros2_driver" exec="ydlidar_ros2_driver_node" name="ydlidar_ros2_driver_node" output="screen">
         <param from="$(find-pkg-share ydlidar_ros2_driver)/params/TminiPro.yaml" allow_substs="true"/>
         <param name="port" value="/dev/serial0"/>
@@ -6,7 +13,11 @@
         <param name="reversion" value="false"/>
     </node>
 
+    <!-- static tf -->
     <node pkg="tf2_ros" exec="static_transform_publisher" name="base_lidar_tf"
           args="0.038 0 0.045 0 0 0 base_link laser_frame"
     />
+
+    <!-- navigation -->
+    <node pkg="rumi_nav" exec="rumi_nav" name="nav"/>
 </launch>

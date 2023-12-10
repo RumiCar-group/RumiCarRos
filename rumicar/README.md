@@ -1,9 +1,17 @@
 # RumiCar system files
 
 ## Autostart
-Put `systemd/rcar.service` to `~/.config/systemd/user/rcar.service` and enable it:
+Copy service file and enable it:
 
 ```
+ssh pi@rcar.local
+
+cd this_package_location
+cp systemd/rcar.service ~/.config/systemd/user/rcar.service
+
+# edit RCAR_LAUNCH if needed
+
+loginctl enable-linger  # so service doesn't require login
 systemctl --user enable rcar.service
 systemctl --user start rcar.service
 ```

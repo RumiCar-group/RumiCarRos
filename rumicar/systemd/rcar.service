@@ -6,5 +6,11 @@ Type=simple
 StandardOutput=journal
 ExecStart=/home/pi/rcar/install/bin/rcar_startup
 
+# INT instead of TERM to stop ros2 launch correctly
+KillSignal=SIGINT
+
+# ros2 launch arguments
+Environment="RCAR_LAUNCH=rumicar original.launch"
+
 [Install]
 WantedBy=default.target
