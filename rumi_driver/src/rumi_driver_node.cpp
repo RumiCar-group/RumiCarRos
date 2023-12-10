@@ -18,6 +18,7 @@ class RumiDriver : public rclcpp::Node
     std::vector<int> batteryLedPins;
     std::vector<float> batteryLedVoltages;
     float minVoltage = 0, maxVoltage = 1;
+    rclcpp::Time lastCommandTime;
 
     RumiGpio gpio;
     RumiPwm pwm;
@@ -27,7 +28,7 @@ class RumiDriver : public rclcpp::Node
 
     std::vector<rclcpp::SubscriptionBase::SharedPtr> subscribers;
     rclcpp::Publisher<sensor_msgs::msg::BatteryState>::SharedPtr batteryPublisher;
-    rclcpp::TimerBase::SharedPtr batteryTimer;
+    rclcpp::TimerBase::SharedPtr pulseTimer;
 
 public:
     RumiDriver() : Node("rumi_driver")
@@ -48,7 +49,7 @@ public:
 
         if (!batteryLedPins.empty())
         {
-            batteryTimer = create_wall_timer(1s, [this] { onBatteryTimer(); });
+            pulseTimer = create_wall_timer(1s, [this] { onPulseTimer(); });
         }
         if (batteryLedVoltages.size() > 1)
         {
@@ -79,7 +80,7 @@ private:
         return {doubles.begin(), doubles.end()};
     }
 
-    void onBatteryTimer()
+    void onPulseTimer()
     try
     {
         sensor_msgs::msg::BatteryState state;
@@ -92,6 +93,11 @@ private:
         batteryPublisher->publish(state);
 
         updateLED(state.voltage);
+
+        if (now() - lastCommandTime > 0.5s)
+        {
+            driveController.drive(0, 0);
+        }
     }
     catch (const std::exception& ex) {}
 
@@ -113,6 +119,7 @@ private:
     try
     {
         driveController.drive(message->linear.x, message->angular.z);
+        lastCommandTime = now();
     }
     catch (const std::exception& ex) {}
 
