@@ -1,5 +1,12 @@
+<!-- Original model -->
 <launch>
+    <!-- base controller dirver -->
     <node pkg="rumi_driver" exec="rumi_driver" name="driver">
         <param from="$(find-pkg-share rumi_driver)/config/driver.yaml" allow_substs="true"/>
+    </node>
+
+    <!-- teleop -->
+    <node pkg="rumi_teleop" exec="rumi_teleop" name="teleop">
+        <param from="$(find-pkg-share rumi_teleop)/config/teleop.yaml" allow_substs="true"/>
     </node>
 </launch>

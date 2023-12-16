@@ -1,11 +1,22 @@
+#include <cmath>
+
 #include <rumi_hw/GPIO.hpp>
 #include <rumi_hw/PWM.hpp>
 
 #include <rumi_hw/DRV8835.hpp>
 
+namespace
+{
+constexpr double X_STOP_VELOCITY = 0.01;  // m/s
+constexpr double A_STOP_VELOCITY = 0.01;  // rad/s
 
-constexpr double X_THRESHOLD = 0.15;
-constexpr double A_THRESHOLD = 0.2;
+/// @param x > 0
+constexpr double dutyFromVelocity(double x)
+{
+    // https://mycurvefit.com/
+    return 0.19 + 1.2 / (1 + std::pow(1.53 / x, 1.73));  // need to make this configurable
+}
+}
 
 DRV8835::DRV8835(RumiGpio& gpio,
                  RumiPwm& pwm,
@@ -49,14 +60,14 @@ DRV8835::~DRV8835()
 
 void DRV8835::drivePhEn(double x, double a)
 {
-    if (x < -X_THRESHOLD)
+    if (x < -X_STOP_VELOCITY)
     {
-        pwm.setDuty(pwmIds[DRIVE], -x);
+        pwm.setDuty(pwmIds[DRIVE], dutyFromVelocity(-x));
         gpio.togglePin(gpioPins[FORWARD_ON], false);
     }
-    else if (x > X_THRESHOLD)
+    else if (x > X_STOP_VELOCITY)
     {
-        pwm.setDuty(pwmIds[DRIVE], x);
+        pwm.setDuty(pwmIds[DRIVE], dutyFromVelocity(x));
         gpio.togglePin(gpioPins[FORWARD_ON], true);
     }
     else
@@ -64,12 +75,12 @@ void DRV8835::drivePhEn(double x, double a)
         pwm.setDuty(pwmIds[DRIVE], 0);
     }
 
-    if (a < -A_THRESHOLD)
+    if (a < -A_STOP_VELOCITY)
     {
         gpio.togglePin(gpioPins[LR_SELECT], false);
         gpio.togglePin(gpioPins[STEER_ON], true);
     }
-    else if (a > A_THRESHOLD)
+    else if (a > A_STOP_VELOCITY)
     {
         gpio.togglePin(gpioPins[LR_SELECT], true);
         gpio.togglePin(gpioPins[STEER_ON], true);
@@ -82,14 +93,14 @@ void DRV8835::drivePhEn(double x, double a)
 
 void DRV8835::driveInIn(double x, double a)
 {
-    if (x < -X_THRESHOLD)
+    if (x < -X_STOP_VELOCITY)
     {
         pwm.setDuty(pwmIds[DRIVE_FORWARD], 0);
-        pwm.setDuty(pwmIds[DRIVE_BACKWARD], -x);
+        pwm.setDuty(pwmIds[DRIVE_BACKWARD], dutyFromVelocity(-x));
     }
-    else if (x > X_THRESHOLD)
+    else if (x > X_STOP_VELOCITY)
     {
-        pwm.setDuty(pwmIds[DRIVE_FORWARD], x);
+        pwm.setDuty(pwmIds[DRIVE_FORWARD], dutyFromVelocity(x));
         pwm.setDuty(pwmIds[DRIVE_BACKWARD], 0);
     }
     else
@@ -98,12 +109,12 @@ void DRV8835::driveInIn(double x, double a)
         pwm.setDuty(pwmIds[DRIVE_BACKWARD], 1);
     }
 
-    if (a < -A_THRESHOLD)
+    if (a < -A_STOP_VELOCITY)
     {
         gpio.togglePin(gpioPins[LEFT], true);
         gpio.togglePin(gpioPins[RIGHT], false);
     }
-    else if (a > A_THRESHOLD)
+    else if (a > A_STOP_VELOCITY)
     {
         gpio.togglePin(gpioPins[LEFT], false);
         gpio.togglePin(gpioPins[RIGHT], true);

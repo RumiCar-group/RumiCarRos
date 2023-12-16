@@ -3,13 +3,15 @@
     axis_linear:  # Left thumb stick vertical
       x: 1
     scale_linear:
-      x: 0.2
+      x: 0.5  # m/s
     scale_linear_turbo:
-      x: 0.4
+      x: 1.0  # m/s
     axis_angular:  # Left thumb stick horizontal
-      yaw: 2
+      yaw: 3
     scale_angular:
       yaw: 0.45
+    axis_beep:
+      tone: 5
 
     enable_button: 6  # Left trigger button
     enable_turbo_button: 7  # Right trigger button

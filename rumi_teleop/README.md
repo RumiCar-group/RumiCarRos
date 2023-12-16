@@ -2,16 +2,14 @@
 
 Proceed below if you connect joystick to remote PC.
 
-## Build
+## Install
+From remote PC:
 ```
-cd rcar  # name of your workspace
-rosdep install --from-paths src -y --ignore-src
-ros2 colcon --packages-up-to rumi_teleop
+sudo apt install ros-<ros_dist>-joy
 ```
 
 ## Launch
-To use joystick connected to remote PC, run the following on it:
-
+From remote PC:
 ```
-ros2 launch rumi_teleop teleop.launch
+ros2 launch joy joy_node
 ```

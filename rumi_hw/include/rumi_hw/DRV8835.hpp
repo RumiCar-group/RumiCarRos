@@ -42,7 +42,7 @@ public:
     ~DRV8835();
 
     /**
-     * @param x [%] forward speed in % of max speed
+     * @param x [m/s] robot velocity
      * @param a [%] left angle in % of max angle (right angle if negative)
      */
     void drive(double x, double a) { return phaseEnableMode ? drivePhEn(x, a) : driveInIn(x, a); }

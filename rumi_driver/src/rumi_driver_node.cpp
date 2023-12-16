@@ -1,9 +1,10 @@
 #include <chrono>
 
 #include <rclcpp/rclcpp.hpp>
+
 #include <geometry_msgs/msg/twist.hpp>
-#include <sensor_msgs/msg/joy.hpp>
 #include <sensor_msgs/msg/battery_state.hpp>
+#include <std_msgs/msg/float32.hpp>
 
 #include <rumi_hw/Beeper.hpp>
 #include <rumi_hw/DRV8835.hpp>
@@ -42,9 +43,9 @@ public:
             , beeper(pwm, static_cast<int>(declare_parameter("beeper_pwm", 1)))
     {
         subscribers.push_back(create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 1,
-                    [this](const geometry_msgs::msg::Twist::ConstSharedPtr& message) { onTwist(message); }));
-        subscribers.push_back(create_subscription<sensor_msgs::msg::Joy>("joy", 1,
-                    [this](const sensor_msgs::msg::Joy::ConstSharedPtr& message) { onJoy(message); }));
+                    [this](const geometry_msgs::msg::Twist& message) { onTwist(message); }));
+        subscribers.push_back(create_subscription<std_msgs::msg::Float32>("beep", 1,
+                    [this](const std_msgs::msg::Float32& message) { onBeep(message); }));
         batteryPublisher = create_publisher<sensor_msgs::msg::BatteryState>("battery", 1);
 
         if (!batteryLedPins.empty())
@@ -115,24 +116,20 @@ private:
         }
     }
 
-    void onTwist(const geometry_msgs::msg::Twist::ConstSharedPtr& message)
+    void onTwist(const geometry_msgs::msg::Twist& message)
     try
     {
-        driveController.drive(message->linear.x, message->angular.z);
+        driveController.drive(message.linear.x, message.angular.z);
         lastCommandTime = now();
     }
     catch (const std::exception& ex) {}
 
-    // Added to reduce CPU usage if joystick connected to robot directly.
-    void onJoy(const sensor_msgs::msg::Joy::ConstSharedPtr& message)
+    void onBeep(const std_msgs::msg::Float32& message)
+    try
     {
-        auto twist = std::make_shared<geometry_msgs::msg::Twist>();
-        twist->linear.x = message->axes[1] * 0.3;  // max 30%
-        twist->angular.z = message->axes[3];
-        onTwist(twist);
-
-        beeper.beep(100 + 50 * message->axes[5], message->axes[5] < 0.99 ? 0.1 : 0.0);
+        beeper.beep(message.data, message.data == 0 ? 0 : 0.1);
     }
+    catch (const std::exception& ex) {}
 };
 
 int main(int argc, char* argv[])

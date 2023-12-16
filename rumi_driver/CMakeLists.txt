@@ -7,6 +7,7 @@ set(libs
         rclcpp
         geometry_msgs
         sensor_msgs
+        std_msgs
 )
 foreach(lib IN LISTS libs)
     find_package(${lib} REQUIRED)
