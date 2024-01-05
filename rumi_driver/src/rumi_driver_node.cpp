@@ -3,8 +3,12 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <geometry_msgs/msg/twist.hpp>
+#include <nav_msgs/msg/odometry.hpp>
 #include <sensor_msgs/msg/battery_state.hpp>
 #include <std_msgs/msg/float32.hpp>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
+#include <tf2_ros/transform_broadcaster.h>
 
 #include <rumi_hw/Beeper.hpp>
 #include <rumi_hw/DRV8835.hpp>
@@ -19,7 +23,6 @@ class RumiDriver : public rclcpp::Node
 	std::vector<int> batteryLedPins;
 	std::vector<float> batteryLedVoltages;
 	float minVoltage = 0, maxVoltage = 1;
-	rclcpp::Time lastCommandTime;
 
 	RumiGpio gpio;
 	RumiPwm pwm;
@@ -27,7 +30,9 @@ class RumiDriver : public rclcpp::Node
 	DRV8835 driveController;
 	Beeper beeper;
 
+	tf2_ros::TransformBroadcaster odometryBroadcaster;
 	std::vector<rclcpp::SubscriptionBase::SharedPtr> subscribers;
+	rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odometryPublisher;
 	rclcpp::Publisher<sensor_msgs::msg::BatteryState>::SharedPtr batteryPublisher;
 	rclcpp::TimerBase::SharedPtr pulseTimer;
 
@@ -40,16 +45,18 @@ public:
 	    , driveController(gpio, pwm, declareInts("drive_gpios", {17, 27, 26, 22}), declareInts("drive_pwms", {0}),
 	              static_cast<int>(declare_parameter("drive_pwm_frequency", 36)))
 	    , beeper(pwm, static_cast<int>(declare_parameter("beeper_pwm", 1)))
+	    , odometryBroadcaster(this)
 	{
 		subscribers.push_back(create_subscription<geometry_msgs::msg::Twist>(
 		        "cmd_vel", 1, [this](const geometry_msgs::msg::Twist& message) { onTwist(message); }));
 		subscribers.push_back(create_subscription<std_msgs::msg::Float32>(
 		        "beep", 1, [this](const std_msgs::msg::Float32& message) { onBeep(message); }));
+		odometryPublisher = create_publisher<nav_msgs::msg::Odometry>("odom", 1);
 		batteryPublisher = create_publisher<sensor_msgs::msg::BatteryState>("battery", 1);
 
 		if (!batteryLedPins.empty())
 		{
-			pulseTimer = create_wall_timer(1s, [this] { onPulseTimer(); });
+			pulseTimer = create_wall_timer(0.1s, [this] { onPulseTimer(); });
 		}
 		if (batteryLedVoltages.size() > 1)
 		{
@@ -83,8 +90,35 @@ private:
 	void onPulseTimer()
 	try
 	{
+		auto currentTime = now();
+		auto odom = driveController.estimateOdometry();
+		tf2::Quaternion tfYaw;
+		tfYaw.setRPY(0, 0, odom.yaw);
+
+		nav_msgs::msg::Odometry odometry;
+		odometry.header.stamp = currentTime;
+		odometry.header.frame_id = "odom";
+		odometry.child_frame_id = "base_link";
+		odometry.twist.twist.linear.x = odom.v;
+		odometry.twist.twist.angular.z = odom.a;
+		odometry.pose.pose.position.x += odom.x;
+		odometry.pose.pose.position.y += odom.y;
+		odometry.pose.pose.position.z = 0;
+		odometry.pose.pose.orientation = tf2::toMsg(tfYaw);
+		odometryPublisher->publish(odometry);
+
+		geometry_msgs::msg::TransformStamped tf;
+		tf.header.stamp = currentTime;
+		tf.header.frame_id = "odom";
+		tf.child_frame_id = "base_link";
+		tf.transform.translation.x = odometry.pose.pose.position.x;
+		tf.transform.translation.y = odometry.pose.pose.position.y;
+		tf.transform.translation.z = odometry.pose.pose.position.z;
+		tf.transform.rotation = odometry.pose.pose.orientation;
+		odometryBroadcaster.sendTransform(tf);
+
 		sensor_msgs::msg::BatteryState state;
-		state.header.stamp = this->now();
+		state.header.stamp = currentTime;
 		state.voltage = batterySpi.get();
 		state.current = state.charge = state.capacity = state.design_capacity = NAN;
 		state.percentage = (state.voltage - minVoltage) / (maxVoltage - minVoltage);
@@ -94,10 +128,7 @@ private:
 
 		updateLED(state.voltage);
 
-		if (now() - lastCommandTime > 0.5s)
-		{
-			driveController.drive(0, 0);
-		}
+		driveController.update();
 	}
 	catch (const std::exception& ex)
 	{}
@@ -120,7 +151,6 @@ private:
 	try
 	{
 		driveController.drive(message.linear.x, message.angular.z);
-		lastCommandTime = now();
 	}
 	catch (const std::exception& ex)
 	{}

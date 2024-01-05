@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <stdexcept>
 #include <vector>
 
@@ -17,14 +18,29 @@ class RumiPwm;
  */
 class DRV8835
 {
+	using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
+
 	enum { LR_SELECT, STEER_ON, DRIVE_ON, FORWARD_ON, LEFT = 0, RIGHT = 1 };
 	enum { DRIVE, DRIVE_FORWARD = 0, DRIVE_BACKWARD = 1 };
+	struct Twist
+	{
+		double v, a;
+	};
+	struct Odometry : Twist
+	{
+		double x, y, yaw;
+	};
 
 	RumiGpio& gpio;
 	RumiPwm& pwm;
 	const std::vector<int> gpioPins;
 	const std::vector<int> pwmIds;
 	bool phaseEnableMode = true;
+	TimePoint lastEstimationTime;
+	TimePoint lastTwistTime;
+	Twist lastTwist = {0, 0};
+	double steeringAngle = 0;
+	Odometry odometry = {0, 0, 0, 0, 0};
 
 public:
 	/**
@@ -43,10 +59,20 @@ public:
 	~DRV8835();
 
 	/**
+	 * @return odometry estimated basing on drive command
+	 */
+	Odometry estimateOdometry();
+
+	/**
+	 * Allows stopping robot if no drive command is received for some time.
+	 */
+	void update();
+
+	/**
      * @param x [m/s] robot velocity
      * @param a [%] left angle in % of max angle (right angle if negative)
      */
-	void drive(double x, double a) { return phaseEnableMode ? drivePhEn(x, a) : driveInIn(x, a); }
+	void drive(double x, double a);
 
 private:
 	void drivePhEn(double x, double a);

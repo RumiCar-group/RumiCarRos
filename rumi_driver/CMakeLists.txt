@@ -4,10 +4,16 @@ project(rumi_driver)
 find_package(ament_cmake REQUIRED)
 find_package(rumi_hw REQUIRED)
 set(libs
+# build depend
         rclcpp
+        tf2
+        tf2_geometry_msgs
+# depend
         geometry_msgs
+        nav_msgs
         sensor_msgs
         std_msgs
+        tf2_ros
 )
 foreach(lib IN LISTS libs)
     find_package(${lib} REQUIRED)
