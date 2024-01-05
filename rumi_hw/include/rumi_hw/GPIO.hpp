@@ -12,23 +12,23 @@ struct gpiod_line;
  */
 class RumiGpio final
 {
-    std::string path;
-    gpiod_chip* chip;
-    std::unordered_map<uint, gpiod_line*> lines;
+	std::string path;
+	gpiod_chip* chip;
+	std::unordered_map<uint, gpiod_line*> lines;
 
 public:
-    /// Opens the device.
-    explicit RumiGpio(std::string devPath = "/dev/gpiochip0");
+	/// Opens the device.
+	explicit RumiGpio(std::string devPath = "/dev/gpiochip0");
 
-    /// Releases all pins and closes the device.
-    ~RumiGpio();
+	/// Releases all pins and closes the device.
+	~RumiGpio();
 
-    /// Toggles OUT pin on / off. Implicitly acquires pin, if necessary.
-    bool togglePin(uint offset, bool on);
+	/// Toggles OUT pin on / off. Implicitly acquires pin, if necessary.
+	bool togglePin(uint offset, bool on);
 
-    /// Acquire pin - other applications won't access it.
-    void acquirePin(uint offset);
+	/// Acquire pin - other applications won't access it.
+	void acquirePin(uint offset);
 
-    /// Release pin.
-    void releasePin(uint offset);
+	/// Release pin.
+	void releasePin(uint offset);
 };
