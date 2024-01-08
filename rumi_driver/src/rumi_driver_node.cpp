@@ -98,7 +98,7 @@ private:
 		nav_msgs::msg::Odometry odometry;
 		odometry.header.stamp = currentTime;
 		odometry.header.frame_id = "odom";
-		odometry.child_frame_id = "base_link";
+		odometry.child_frame_id = "base_footprint";
 		odometry.twist.twist.linear.x = odom.v;
 		odometry.twist.twist.angular.z = odom.a;
 		odometry.pose.pose.position.x += odom.x;
@@ -110,7 +110,7 @@ private:
 		geometry_msgs::msg::TransformStamped tf;
 		tf.header.stamp = currentTime;
 		tf.header.frame_id = "odom";
-		tf.child_frame_id = "base_link";
+		tf.child_frame_id = "base_footprint";
 		tf.transform.translation.x = odometry.pose.pose.position.x;
 		tf.transform.translation.y = odometry.pose.pose.position.y;
 		tf.transform.translation.z = odometry.pose.pose.position.z;
