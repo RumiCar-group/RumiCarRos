@@ -6,7 +6,7 @@
 Try [rosdep](https://docs.ros.org/en/humble/Tutorials/Intermediate/Rosdep.html). After it's installed, run:
 ```
 cd ~/rcar
-rosdep install --from-paths src -y --ignore-src
+rosdep install -r --from-paths src -y --ignore-src
 ```
 
 ## Build

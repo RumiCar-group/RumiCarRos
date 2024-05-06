@@ -40,7 +40,7 @@ When packages are built (and uploaded), execute the following on the robot to st
 ros2 run rumi_driver rumi_driver
 
 # or
-ros2 launch rumicar main.launch
+ros2 launch rumicar original.launch
 ```
 
 ## Joystick

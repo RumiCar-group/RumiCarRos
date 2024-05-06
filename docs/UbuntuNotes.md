@@ -9,8 +9,15 @@ sudo apt-get install raspi-config
 
 Though it might be better to directly edit `/boot/firmware/config.txt` (`/boot/config.txt`).
 
+#### Disable bluetooth
+```
+# Disable BT
+dtoverlay=disable-bt
+```
+
 ### Clean packages
 ```
+sudo apt remove bluez pi-bluetooth  # BT related
 sudo apt remove cloud-* multipath-tools packagekit polkitd rsyslog snapd unattended-upgrades
 ```
 
