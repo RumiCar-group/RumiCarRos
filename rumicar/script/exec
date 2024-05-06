@@ -1,0 +1,6 @@
+#!/bin/bash
+
+args=$@
+non_ros_args=${args%%--ros-args*}
+
+exec $non_ros_args

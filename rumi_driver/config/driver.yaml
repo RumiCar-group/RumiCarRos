@@ -1,8 +1,5 @@
 /**:
   ros__parameters:
-    battery_led_pins: [ 5, 6, 16, 20, 21 ]
-    battery_led_voltages: [ 3.0, 3.2, 3.4, 3.6, 3.8, 4.0 ]
-    drive_gpios: [ 17, 27, 26, 22 ]
-    drive_pwms: [ 0 ]
+    drive_gpios: [ 17, 27 ]
+    drive_pwms: [ 0, 1 ]
     drive_pwm_frequency: 36
-    beeper_pwm: 1

@@ -1,0 +1,6 @@
+/**:
+  ros__parameters:
+    image_size: [320, 240]
+    output_encoding: mono8
+    horizontal_flip: true
+    vertical_flip: true

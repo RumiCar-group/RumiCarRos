@@ -1,12 +1,22 @@
 <!-- Original model -->
 <launch>
+    <arg name="driver_config" default="$(find-pkg-share rumi_driver)/config/driver.yaml"/>
+    <arg name="enable_teleop" default="false"/>
+    <arg name="enable_lane" default="true"/>
+
     <!-- base controller dirver -->
     <node pkg="rumi_driver" exec="rumi_driver" name="driver">
-        <param from="$(find-pkg-share rumi_driver)/config/driver.yaml" allow_substs="true"/>
+        <param from="$(var driver_config)" allow_substs="true"/>
     </node>
 
     <!-- teleop -->
-    <node pkg="rumi_teleop" exec="rumi_teleop" name="teleop">
+    <node pkg="rumi_teleop" exec="rumi_teleop" name="teleop" if="$(var enable_teleop)">
         <param from="$(find-pkg-share rumi_teleop)/config/teleop.yaml" allow_substs="true"/>
     </node>
+
+    <!-- camera driver -->
+    <include file="$(find-pkg-share rumicar)/launch/camera.launch" if="$(var enable_lane)"/>
+
+    <!-- lane detection and control -->
+    <node pkg="rumi_lane" exec="rumi_lane" name="rumi_lane" if="$(var enable_lane)"/>
 </launch>

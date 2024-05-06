@@ -1,0 +1,13 @@
+<launch>
+    <node pkg="rumicar" exec="exec" name="change_fps" args="v4l2-ctl --set-parm 10" output="screen"/>
+
+    <node pkg="v4l2_camera" exec="v4l2_camera_node" name="camera">
+        <param from="$(find-pkg-share rumicar)/config/camera.yaml" allow_substs="true"/>
+    </node>
+
+    <!-- fix for Camera "image_raw/compressed" to work in rviz2 -->
+    <node pkg="topic_tools" exec="relay" name="rviz2_camera_info"
+          args="camera_info image_raw/camera_info"/>
+    <node pkg="topic_tools" exec="relay" name="rviz2_lane_camera_info"
+          args="camera_info rumi_lane/image_debug/camera_info"/>
+</launch>
