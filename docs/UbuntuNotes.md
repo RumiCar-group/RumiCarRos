@@ -27,3 +27,14 @@ Fix the "System is booting up. Unprivileged users are not permitted to log in ye
 sudo nano /etc/pam.d/login
 # comment out:  auth  requisite  pam_nologin.so
 ```
+
+Fix failure waiting for wired network:
+```
+sudo mkdir -p /etc/systemd/system/systemd-networkd-wait-online.service.d/
+sudo nano /etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf
+
+# save the file with following contents
+[Service]
+ExecStart=
+ExecStart=/lib/systemd/systemd-networkd-wait-online --interface=wlan0
+```
