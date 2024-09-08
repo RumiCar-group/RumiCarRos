@@ -6,3 +6,4 @@
     drive_pwms: [ 0 ]
     drive_pwm_frequency: 36
     beeper_pwm: 1
+    velocity_pin: 4

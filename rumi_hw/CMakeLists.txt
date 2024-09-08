@@ -3,6 +3,7 @@ project(rumi_hw)
 
 MESSAGE(STATUS "Using toolchain file: ${CMAKE_TOOLCHAIN_FILE}")
 
+find_package(Boost REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(libgpiod REQUIRED IMPORTED_TARGET libgpiod)
 
@@ -12,6 +13,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
+        PRIVATE ${Boost_INCLUDE_DIRS}
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE PkgConfig::libgpiod)
 

@@ -16,6 +16,8 @@
 #include <rumi_hw/MCP3002.hpp>
 #include <rumi_hw/PWM.hpp>
 
+#include "VelocitySensor.hpp"
+
 using namespace std::chrono_literals;
 
 class RumiDriver : public rclcpp::Node
@@ -29,6 +31,7 @@ class RumiDriver : public rclcpp::Node
 	MCP3002 batterySpi;
 	DRV8835 driveController;
 	Beeper beeper;
+	VelocitySensor velocitySensor;
 
 	tf2_ros::TransformBroadcaster odometryBroadcaster;
 	std::vector<rclcpp::SubscriptionBase::SharedPtr> subscribers;
@@ -45,6 +48,7 @@ public:
 	    , driveController(gpio, pwm, declareInts("drive_gpios", {17, 27, 26, 22}), declareInts("drive_pwms", {0}),
 	              static_cast<int>(declare_parameter("drive_pwm_frequency", 36)))
 	    , beeper(pwm, static_cast<int>(declare_parameter("beeper_pwm", 1)))
+	    , velocitySensor(static_cast<int>(declare_parameter("velocity_pin", 0)))
 	    , odometryBroadcaster(this)
 	{
 		subscribers.push_back(create_subscription<geometry_msgs::msg::Twist>(
@@ -92,6 +96,7 @@ private:
 	{
 		auto currentTime = now();
 		auto odom = driveController.estimateOdometry();
+		double velocity = velocitySensor.getVelocity();
 		tf2::Quaternion tfYaw;
 		tfYaw.setRPY(0, 0, odom.yaw);
 
@@ -99,7 +104,7 @@ private:
 		odometry.header.stamp = currentTime;
 		odometry.header.frame_id = "odom";
 		odometry.child_frame_id = "base_footprint";
-		odometry.twist.twist.linear.x = odom.v;
+		odometry.twist.twist.linear.x = velocity * (odom.v < 0 ? -1 : odom.v > 0 ? 1 : 0);
 		odometry.twist.twist.angular.z = odom.a;
 		odometry.pose.pose.position.x += odom.x;
 		odometry.pose.pose.position.y += odom.y;

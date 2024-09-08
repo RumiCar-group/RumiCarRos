@@ -22,7 +22,7 @@ endforeach()
 
 ament_package()
 
-file(GLOB_RECURSE src src/*.cpp)
+file(GLOB_RECURSE src src/*.cpp src/*.hpp)
 add_executable(${PROJECT_NAME} ${src})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 target_link_libraries(${PROJECT_NAME} ${targs} rumi::hw)
