@@ -1,7 +1,6 @@
 <!-- Model with YDLidar on top -->
 <launch>
-    <arg name="enable_teleop" default="false"/>
-    <arg name="enable_lane" default="true"/>
+    <arg name="enable_lane" default="false"/>
 
     <include file="$(find-pkg-share rumicar)/launch/original.launch">
         <arg name="driver_config" value="$(find-pkg-share rumi_driver)/config/driver_kuro.yaml"/>
