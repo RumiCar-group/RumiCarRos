@@ -1,4 +1,7 @@
 #!/bin/bash
 
 . ~/rcar/install/setup.bash
+
+export RCUTILS_CONSOLE_OUTPUT_FORMAT="[{severity}] [{name}]: {message}"
+
 ros2 launch ${RCAR_LAUNCH}
