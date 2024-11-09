@@ -1,0 +1,14 @@
+<package format="3">
+  <name>rumicar_kuro</name>
+  <version>0.0.0</version>
+  <description>RumiCar Kuro launch files</description>
+  <maintainer email="akela1101@gmail.com">andrei</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>rumicar</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

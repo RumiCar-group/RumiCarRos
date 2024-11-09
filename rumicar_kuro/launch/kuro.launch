@@ -3,7 +3,7 @@
     <arg name="enable_lane" default="false"/>
 
     <include file="$(find-pkg-share rumicar)/launch/original.launch">
-        <arg name="driver_config" value="$(find-pkg-share rumi_driver)/config/driver_kuro.yaml"/>
+        <arg name="driver_config" value="$(find-pkg-share rumicar_kuro)/config/driver_kuro.yaml"/>
     </include>
 
     <!-- static tfs -->
