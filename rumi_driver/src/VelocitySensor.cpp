@@ -47,8 +47,6 @@ double VelocitySensor::getVelocity() const
 		return 0;
 	}
 	double period = hall->getPeriod();
-	RCLCPP_INFO_STREAM(rclcpp::get_logger("velocity"), "Period: " << period << ", freq: " << 1 / period);
-
 	if (period == 0)
 	{
 		return 0;  // 0 period means sensor gave up on waiting
@@ -58,5 +56,7 @@ double VelocitySensor::getVelocity() const
 	{
 		return 0;  // too big period means too old last triggering
 	}
+	RCLCPP_DEBUG_STREAM(rclcpp::get_logger("velocity"),
+	        "Period: " << wheelPeriod << ", freq: " << 1 / wheelPeriod << ", rpm: " << 60 / wheelPeriod);
 	return M_PI * WHEEL_DIAMETER / wheelPeriod;
 }

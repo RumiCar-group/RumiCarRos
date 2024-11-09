@@ -5,11 +5,23 @@ can be used instead of RasPiOS.
 ### Optionally install Raspi Config:
 ```
 sudo apt-get install raspi-config
+sudo raspi-config
 ```
 
-Though it might be better to directly edit `/boot/firmware/config.txt` (`/boot/config.txt`).
+#### Enable Serial Port
+* Interface Options
+  * Serial Port
+    * Login Shell: no
+    * Serial Port: yes
+
+#### Important Note
+One time raspi-config made OS non-bootable, so the following settings are maybe better to change manually:
+`/boot/firmware/config.txt` (`/boot/config.txt`).
+
+The menu above probably does `enable_uart=1`, but somehow it did not work without raspi-config.
 
 #### Disable bluetooth
+This is needed to enable HW UART (ttyAMA0) instead of SW UART (ttyS0).
 ```
 # Disable BT
 dtoverlay=disable-bt
