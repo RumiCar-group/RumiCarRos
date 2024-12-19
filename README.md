@@ -1,7 +1,10 @@
 # 注意
 このプログラムは本家のラズパイRumiCarのピンアサインとは違います。
+
 本家のラズパイRumiCarでこのROSのプログラムを使用する場合、RumiCarのFacebook groupでご相談ください。
+
 RumiCar FacebookのURL：https://www.facebook.com/groups/rumicar
+
 参考：https://github.com/RumiCar-group/RumiCar/tree/master/RasPi
 
 # RumiCar ROS2
