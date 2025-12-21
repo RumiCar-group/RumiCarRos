@@ -23,22 +23,17 @@ sudo raspi-config
     * Login Shell: no
     * Serial Port: yes
 
-#### Important Note
-One time raspi-config made OS non-bootable, so the following settings are maybe better to change manually:
-`/boot/firmware/config.txt` (`/boot/config.txt`).
-
-The menu above probably does `enable_uart=1`, but somehow it did not work without raspi-config.
-
 #### Disable bluetooth
 This is needed to enable HW UART (ttyAMA0) instead of SW UART (ttyS0).
 ```
+sudo nano /boot/firmware/config.txt 
+
 # Disable BT
 dtoverlay=disable-bt
 ```
 
 ### Clean packages
 ```
-sudo apt remove bluez pi-bluetooth  # BT related
 sudo apt remove cloud-* multipath-tools packagekit polkitd rsyslog snapd unattended-upgrades
 ```
 

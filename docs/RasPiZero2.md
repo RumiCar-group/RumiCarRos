@@ -1,10 +1,17 @@
 ## Install ROS
 
-* https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html
+* https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debians.html
+
+Needed packages:
+```
+sudo apt install ros-jazzy-ros-base
+```
 
 ## Dependencies
-Try [rosdep](https://docs.ros.org/en/humble/Tutorials/Intermediate/Rosdep.html). After it's installed, run:
+Try [rosdep](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Rosdep.html)
 ```
+sudo rosdep init
+rosdep update
 cd ~/rcar
 rosdep install -r --from-paths src -y --ignore-src
 ```
@@ -12,7 +19,7 @@ rosdep install -r --from-paths src -y --ignore-src
 ## Build
 
 ```
-. /opt/ros/humble/setup.bash
+. /opt/ros/jazzy/setup.bash
 cd ~/rcar
 colcon build --packages-up-to rumicar
 ```

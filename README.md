@@ -13,16 +13,17 @@ RumiCar FacebookのURL：https://www.facebook.com/groups/rumicar
 ```
 mkdir -p ~/rcar/src
 cd ~/rcar/src
-git clone --recursive <url>/RumiCarRos.git
+git clone https://github.com/RumiCar-group/RumiCarRos.git
 ```
 
 ## Robot Setup
-Setup the robot micro SD card with Ubuntu 22 Server.
+Setup the robot micro SD card with [Ubuntu 24 Server](docs/UbuntuNotes.md)
 
 * https://www.raspberrypi.com/software/
 
 ### Gpiod
-The driver uses `gpiod` and `sysfs` to control the motors with minimum CPU consumption. But in this case `pigpio` should be turned off and maybe uninstalled.
+The driver uses `gpiod` and `sysfs` to control the motors with minimum CPU consumption. 
+If it was installed, `pigpio` should be turned off and uninstalled first.
 ```
 sudo systemctl stop pigpiod
 sudo systemctl disable pigpiod
@@ -30,8 +31,9 @@ sudo apt remove pigpiod
 ```
 
 ### PWM
-PWM for 13 and 18 pins should be enabled in `/boot/firmware/config.txt`:
+Edit `/boot/firmware/config.txt`:
 ```
+# PWM for 13 and 18 pins
 dtoverlay=pwm-2chan,pin=18,func=2,pin2=13,func2=4
 ```
 

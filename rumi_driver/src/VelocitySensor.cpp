@@ -23,7 +23,10 @@ VelocitySensor::VelocitySensor(int pin)
 		hallThread = std::make_unique<std::thread>([this] { hall->run(); });
 		RCLCPP_INFO_STREAM(rclcpp::get_logger("velocity"), "Start");
 	}
-	RCLCPP_INFO_STREAM(rclcpp::get_logger("velocity"), "No sensor");
+	else
+	{
+		RCLCPP_INFO_STREAM(rclcpp::get_logger("velocity"), "No sensor");
+	}
 }
 
 VelocitySensor::~VelocitySensor()
