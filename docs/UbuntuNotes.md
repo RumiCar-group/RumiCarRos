@@ -2,6 +2,15 @@
 can be used instead of RasPiOS.
 
 ## Setup
+### Recommended to add swap first
+```
+sudo dd if=/dev/zero of=/swapfile bs=1M count=1024
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
 ### Optionally install Raspi Config:
 ```
 sudo apt-get install raspi-config
