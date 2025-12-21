@@ -10,6 +10,7 @@ sudo apt install ros-jazzy-ros-base
 ## Dependencies
 Try [rosdep](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Rosdep.html)
 ```
+sudo apt install python3-rosdep
 sudo rosdep init
 rosdep update
 cd ~/rcar

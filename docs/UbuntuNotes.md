@@ -1,14 +1,32 @@
 # Ubuntu
-can be used instead of RasPiOS.
+Is better for ROS compared to RasPiOS.
+
+## Deploy
+Install and run `Raspberry Pi Imager`.
+
+* Device: Raspberry Pi Zero 2 W
+* OS: Other general-purpose OS / Ubuntu / Ubuntu Server 24 (64-bit)
+* Storage: your micro-SD card
+* etc...
+
+Insert the card into raspi, start it and get terminal (either real or ssh).
 
 ## Setup
 ### Recommended to add swap first
+The RAM is limited, so it is very possible to exceed the limit. 
+Below 1GB is added, but you can select more.
 ```
 sudo dd if=/dev/zero of=/swapfile bs=1M count=1024
 sudo chmod 600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
 echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+### Optionally install Avahi
+This will help you to find the robot by `<hostname>.local`
+```
+sudo apt install avahi-daemon
 ```
 
 ### Optionally install Raspi Config:
