@@ -10,9 +10,9 @@ slam_toolbox:
 
     # General Parameters
     use_scan_matching: true
-    use_scan_barycenter: true
-    minimum_travel_distance: 0.05  # 5 cm
-    minimum_travel_heading: 0.05
+    use_scan_barycenter: false
+    minimum_travel_distance: 0.01  # 1 cm
+    minimum_travel_heading: 0.01  # 0.5 deg
     scan_buffer_size: 3
     scan_buffer_maximum_scan_distance: 10.0
     link_scan_maximum_distance: 1.0

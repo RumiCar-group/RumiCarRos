@@ -1,16 +1,23 @@
 <launch>
     <include file="$(find-pkg-share rumi_nav)/launch/lidar.launch"/>
 
+    <node pkg="nav2_lifecycle_manager" exec="lifecycle_manager" name="lifecycle_manager" output="screen">
+        <param name="autostart" value="true"/>
+        <param name="node_names" value="['map_server', 'amcl']"/>
+    </node>
+
     <node pkg="nav2_map_server" exec="map_server" name="map_server" output="screen">
         <param name="yaml_filename" value="/home/pi/.ros/map.yaml"/>
     </node>
-    <node pkg="nav2_lifecycle_manager" exec="lifecycle_manager" name="lifecycle_manager" output="screen">
-        <param name="autostart" value="true"/>
-        <param name="node_names" value="['map_server']"/>
+
+    <node pkg="nav2_amcl" exec="amcl" name="amcl" output="screen">
+        <param from="$(find-pkg-share rumi_nav)/config/amcl.yaml"/>
     </node>
 
+    <!-- matching does not accurately converge - no idea why
     <node pkg="slam_toolbox" exec="localization_slam_toolbox_node" name="slam_toolbox" output="screen">
         <param from="$(find-pkg-share rumi_nav)/config/slam.yaml"/>
         <param name="map_name" value="/map_slam_disabled"/>
     </node>
+    -->
 </launch>

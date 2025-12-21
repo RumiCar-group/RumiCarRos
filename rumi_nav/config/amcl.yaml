@@ -1,0 +1,5 @@
+amcl:
+  ros__parameters:
+    update_min_a: 0.01  # 1 cm
+    update_min_d: 0.01  # 0.5 deg
+    sigma_hit: 1.0      # Broadens the likelihood of matching
