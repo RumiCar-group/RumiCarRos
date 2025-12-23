@@ -11,5 +11,5 @@ sudo apt install ros-<ros_dist>-joy
 ## Launch
 From remote PC:
 ```
-ros2 launch joy joy_node
+ros2 run joy joy_node
 ```
