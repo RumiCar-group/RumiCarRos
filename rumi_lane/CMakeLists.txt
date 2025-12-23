@@ -21,7 +21,7 @@ ament_package()
 
 file(GLOB_RECURSE src src/*.cpp)
 add_executable(${PROJECT_NAME} ${src})
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
 target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${targs} ${OpenCV_LIBS})
 

@@ -9,7 +9,7 @@ pkg_check_modules(libgpiod REQUIRED IMPORTED_TARGET libgpiod)
 
 file(GLOB_RECURSE src src/*.cpp include/*.hpp)
 add_library(${PROJECT_NAME} ${src})
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
 target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>

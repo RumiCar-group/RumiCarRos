@@ -17,7 +17,7 @@ endforeach()
 ament_package()
 
 add_executable(${PROJECT_NAME} src/rumi_teleop_node.cpp)
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
 target_link_libraries(${PROJECT_NAME} ${targs})
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION lib/${PROJECT_NAME})

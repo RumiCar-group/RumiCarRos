@@ -1,4 +1,5 @@
 #include <chrono>
+#include <ranges>
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -67,7 +68,13 @@ public:
 			minVoltage = batteryLedVoltages.front();
 			maxVoltage = batteryLedVoltages.back();
 		}
-		RCLCPP_INFO(get_logger(), "Initialized");
+		RCLCPP_INFO(get_logger(), "=== Parameters ===");
+		for (const auto& name: list_parameters({}, 0).names
+			| std::views::filter([](auto& s){ return !s.starts_with("qos"); }))
+		{
+				std::string value = get_parameter(name).value_to_string();
+				RCLCPP_INFO_STREAM(get_logger(), name << ": " << value);
+		}
 	}
 
 	~RumiDriver() override
