@@ -10,7 +10,6 @@ class RumiPwm final
 public:
 	/// Creates 2 PWMs: 0 and 1
 	RumiPwm();
-	~RumiPwm();
 
 	/// PWM frequency in Hz >10 (lower value makes it easier to start moving)
 	void setFrequency(int index, double value);

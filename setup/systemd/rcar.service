@@ -1,5 +1,6 @@
 [Unit]
 Description=RumiCar driver
+After=pwm-exporter.service
 
 [Service]
 Type=simple

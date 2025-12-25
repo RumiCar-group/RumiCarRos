@@ -12,6 +12,12 @@ Setup the robot micro SD card with [Ubuntu 24 Server](docs/UbuntuNotes.md)
 
 * https://www.raspberrypi.com/software/
 
+### SSH
+Gain access to the robot:
+```
+ssh pi@rcar.local
+```
+
 ### Gpiod
 The driver uses `gpiod` and `sysfs` to control the motors with minimum CPU consumption. 
 If it was installed, `pigpio` should be turned off and uninstalled first.
@@ -29,6 +35,14 @@ dtoverlay=pwm-2chan,pin=12,func=2,pin2=13,func2=4
 ```
 
 * https://github.com/dotnet/iot/blob/main/Documentation/raspi-pwm.md
+
+### Deploy
+Setup devices and startup scripts:
+```
+./setup/deploy
+```
+
+The driver will start on login, if you build it as specfied below.
 
 ## Build
 * [RasPi Zero](docs/RasPiZero.md)

@@ -1,0 +1,18 @@
+[Unit]
+Description=Export PWM0 and PWM1 on pwmchip0
+After=udev.service
+ConditionPathExists=/sys/class/pwm/pwmchip0
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'echo 0 > /sys/class/pwm/pwmchip0/export || true'
+ExecStart=/bin/sh -c 'echo 1 > /sys/class/pwm/pwmchip0/export || true'
+
+ExecStop=/bin/sh -c 'echo 0 > /sys/class/pwm/pwmchip0/unexport || true'
+ExecStop=/bin/sh -c 'echo 1 > /sys/class/pwm/pwmchip0/unexport || true'
+
+# Keep active, so it is clear that service succeeded
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

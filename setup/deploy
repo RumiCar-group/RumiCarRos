@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+# Define paths
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+USER_SYSTEMD_DIR="$HOME/.config/systemd/user"
+
+echo "🚀 Starting deployment..."
+
+echo "📦 Installing udev rules..."
+sudo cp "$SCRIPT_DIR/udev/99-pwm.rules" /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+echo "📦 Installing PWM exporter service..."
+sudo cp "$SCRIPT_DIR/systemd/pwm-exporter.service" /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable pwm-exporter.service
+sudo systemctl restart pwm-exporter.service
+
+echo "📦 Installing RCAR user service..."
+mkdir -p "$USER_SYSTEMD_DIR"
+cp "$SCRIPT_DIR/systemd/rcar.service" "$USER_SYSTEMD_DIR/"
+systemctl --user daemon-reload
+systemctl --user enable rcar.service
+systemctl --user restart rcar.service
+
+# This allows user services to run at boot without user login
+echo "🔧 Enabling user lingering..."
+sudo loginctl enable-linger
+
+echo "✅ Deployment complete!"
+echo "Check status with:"
+echo "  systemctl status pwm-exporter"
+echo "  systemctl --user status rcar"
+echo "  journalctl --user-unit rcar"

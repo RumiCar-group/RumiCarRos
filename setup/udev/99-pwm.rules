@@ -1,0 +1,2 @@
+# Enable access from application run by user of "gpio" group
+SUBSYSTEM=="pwm", KERNEL=="pwmchip*", RUN+="/bin/sh -c 'chgrp -R gpio /sys%p && chmod -R g+w /sys%p'"

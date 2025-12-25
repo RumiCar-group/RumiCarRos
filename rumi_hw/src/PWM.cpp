@@ -1,13 +1,22 @@
 #include <fstream>
-#include <unistd.h>
+#include <filesystem>
 
 #include <rumi_hw/PWM.hpp>
 
-const std::string prefix = "/sys/class/pwm/pwmchip0/";
+const std::string PREFIX = "/sys/class/pwm/pwmchip0/";
+
+void throw_if_no_pwm(int ch)
+{
+	auto file = PREFIX + "pwm" + std::to_string(ch);
+	if (!std::filesystem::exists(file))
+	{
+		throw std::runtime_error("No pwm file: " + file);
+	}
+}
 
 void write(const std::string& file, int value)
 {
-	std::ofstream sysFile(prefix + file);
+	std::ofstream sysFile(PREFIX + file);
 	sysFile << std::to_string(value);
 }
 
@@ -19,16 +28,8 @@ void checkIndex(int index)
 
 RumiPwm::RumiPwm()
 {
-	write("export", 0);
-	write("export", 1);
-
-	usleep(300'000);  // uncertain way to know that pin created
-}
-
-RumiPwm::~RumiPwm()
-{
-	write("unexport", 0);
-	write("unexport", 1);
+	throw_if_no_pwm(0);
+	throw_if_no_pwm(1);
 }
 
 void RumiPwm::setFrequency(int index, double value)
