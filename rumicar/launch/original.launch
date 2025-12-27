@@ -17,7 +17,5 @@
     <include file="$(find-pkg-share rumicar)/launch/camera.launch" if="$(var enable_lane)"/>
 
     <!-- lane detection and control -->
-    <node pkg="rumi_lane" exec="rumi_lane" name="rumi_lane" if="$(var enable_lane)">
-        <param from="$(find-pkg-share rumi_lane)/config/rumi_lane.yaml" allow_substs="true"/>
-    </node>
+    <include file="$(find-pkg-share rumi_lane)/launch/lane.launch" if="$(var enable_lane)"/>
 </launch>

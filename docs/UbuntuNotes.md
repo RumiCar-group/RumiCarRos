@@ -50,9 +50,38 @@ sudo nano /boot/firmware/config.txt
 dtoverlay=disable-bt
 ```
 
+#### Enable legacy camera
+There was an error `FATAL Serializer control_serializer.cpp:605 A list of V4L2 controls requires a ControlInfoMap` when trying to use `camera_ros camera_node`. So it is easier to fall back to legacy appraoch:
+```
+# comment out default settings
+#dtoverlay=vc4-kms-v3d
+#disable_fw_kms_setup=1
+
+# libcamera is disabled
+#camera_auto_detect=1
+#display_auto_detect=1
+
+# legacy camera driver is enabled
+camera_auto_detect=0
+start_x=1
+gpu_mem=64
+
+[pi02]
+# set cma to 64 MB too 
+dtoverlay=vc4-kms-v3d,cma-64
+```
+
 ### Clean packages
 ```
 sudo apt remove cloud-* multipath-tools packagekit polkitd rsyslog snapd unattended-upgrades
+```
+
+### Optionally disable Ubuntu features
+```
+sudo nano /etc/default/apport
+
+# set
+enabled=0
 ```
 
 ### Fix Errors

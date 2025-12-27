@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="rumi_lane" exec="rumi_lane" name="rumi_lane">
+        <param from="$(find-pkg-share rumi_lane)/config/rumi_lane.yaml" allow_substs="true"/>
+    </node>
+</launch>
