@@ -71,3 +71,10 @@ Please, check [**here**](rumi_teleop/README.md).
 This is an YouTube video for how this code works. -> [ROS2でRumiCarを遠隔操作/Remote control RumiCar by ROS2](https://youtu.be/bZCdvuuSebk)
 
 [![ROS2でRumiCarを遠隔操作/Remote control RumiCar by ROS2](http://img.youtube.com/vi/bZCdvuuSebk/0.jpg)](https://youtu.be/bZCdvuuSebk "ROS2でRumiCarを遠隔操作/Remote control RumiCar by ROS2")
+
+## Enable ignored packages
+Some packages are skipped from rosdep and build with COLCON_IGNORE. To enable them, run:
+```
+git update-index --skip-worktree COLCON_IGNORE
+rm COLCON_IGNORE
+```
