@@ -1,19 +1,28 @@
 slam_toolbox:
   ros__parameters:
-    transform_publish_period: 0.1
-    map_update_interval: 1.0
-    resolution: 0.05
-    max_laser_range: 12.0
-    transform_timeout: 0.2
-    tf_buffer_duration: 1.0
-    stack_size_to_use: 10000000  # 10 MB
+    # Toolbox
+    map_update_interval: 1.0        # [s]
+    max_laser_range: 12.0           # [m]
+    minimum_travel_distance: 0.1    # [m] ~1/2 of robot size movement adds new reading
+    minimum_travel_heading: 0.05    # [rad] ~3 deg
+    resolution: 0.025               # [m] map resolution - roughly wheel diameter
+    stack_size_to_use: 40000000     # [B] 40 MB max limit
+    tf_buffer_duration: 10.0        # [s] duration to store TF messages for lookup
+    transform_publish_period: 0.1   # [s] 10 Hz - same as lidar
+    transform_timeout: 0.5          # [s] tf lookup timeout
+    scan_queue_size: 5              # number of messages in queue
 
-    # General Parameters
-    use_scan_matching: true
-    use_scan_barycenter: false
-    minimum_travel_distance: 0.01  # 1 cm
-    minimum_travel_heading: 0.01  # 0.5 deg
-    scan_buffer_size: 3
-    scan_buffer_maximum_scan_distance: 10.0
-    link_scan_maximum_distance: 1.0
-    do_loop_closing: true
+    # Matcher
+    angle_variance_penalty: 1.0                     # Allow more Lidar freedom during fast turns
+    correlation_search_space_dimension: 0.3         # Search grid size to do scan correlation over
+    correlation_search_space_resolution: 0.005      # Finer alignment grid
+    correlation_search_space_smear_deviation: 0.03  # Sharper matching
+    distance_variance_penalty: 0.15                 # 0.3  # bigger -> trust odom, less -> trust lidar
+    do_loop_closing: true                           # Enable global error correction by closing loops
+    link_match_minimum_response_fine: 0.2           # Don't accept "blurry" matches
+    link_scan_maximum_distance: 1.0                 # Max distance between linked nodes in the pose graph
+    loop_search_maximum_distance: 6.0               # Radius to search for loop closure candidates
+    scan_buffer_maximum_scan_distance: 10.0         # Max distance robot travels before forcing a new scan into the buffer
+    scan_buffer_size: 3                             # Number of scans to keep in memory for local matching
+    use_scan_barycenter: false                      # Match using the scan center of mass instead of laser origin
+    use_scan_matching: true                         # Refine odometry by aligning lidar scans to the existing map
