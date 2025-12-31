@@ -8,6 +8,9 @@
 
     <!-- static tfs -->
     <node pkg="tf2_ros" exec="static_transform_publisher" name="base_base_tf"
+          args="--frame-id map --child-frame-id odom"
+    />
+    <node pkg="tf2_ros" exec="static_transform_publisher" name="base_base_tf"
           args="--z 0.015 --frame-id base_footprint --child-frame-id base_link"
     />
 </launch>
