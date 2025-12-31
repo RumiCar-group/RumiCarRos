@@ -102,8 +102,8 @@ private:
 	try
 	{
 		auto currentTime = now();
-		auto odom = driveController.estimateOdometry();
-		double velocity = velocitySensor.getVelocity();
+		auto absVelocity = velocitySensor.getAbsVelocity();
+		auto odom = driveController.estimateOdometry(absVelocity);
 		tf2::Quaternion tfYaw;
 		tfYaw.setRPY(0, 0, odom.yaw);
 
@@ -111,8 +111,8 @@ private:
 		odometry.header.stamp = currentTime;
 		odometry.header.frame_id = "odom";
 		odometry.child_frame_id = "base_footprint";
-		odometry.twist.twist.linear.x = velocity * (odom.v < 0 ? -1 : odom.v > 0 ? 1 : 0);
-		odometry.twist.twist.angular.z = odom.a;
+		odometry.twist.twist.linear.x = odom.v;
+		odometry.twist.twist.angular.z = odom.w;
 		odometry.pose.pose.position.x += odom.x;
 		odometry.pose.pose.position.y += odom.y;
 		odometry.pose.pose.position.z = 0;

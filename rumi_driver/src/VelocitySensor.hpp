@@ -1,8 +1,7 @@
 #pragma once
 
-#include <atomic>
 #include <thread>
-#include <iostream>
+#include <optional>
 
 class HallSensor;
 
@@ -15,5 +14,5 @@ public:
 	explicit VelocitySensor(int pin);
 	~VelocitySensor();
 
-	double getVelocity() const;
+	std::optional<double> getAbsVelocity() const;
 };

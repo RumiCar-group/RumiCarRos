@@ -10,11 +10,11 @@ using namespace std::chrono_literals;
 namespace
 {
 constexpr double X_STOP_VELOCITY = 0.01;   // m/s
-constexpr double A_STOP_VELOCITY = 0.01;   // rad/s
-constexpr double X_ACCELERATION = 1.0;     // m/s/s
+constexpr double S_STOP_VELOCITY = 0.01;   // rad/s
+constexpr double MAX_ACCELERATION = 1.0;   // m/s/s
 constexpr double WHEEL_BASE = 0.11;        // m
 constexpr double MIN_CIRCLE_RADIUS = 0.5;  // m
-constexpr double STEERING_SPEED = 2.0;     // rad/s
+constexpr double MAX_STEERING_VELOCITY = 2.0;  // rad/s
 
 constexpr double STEERING_LIMIT = WHEEL_BASE / MIN_CIRCLE_RADIUS;  // rad
 
@@ -68,20 +68,21 @@ DRV8835::~DRV8835()
 	}
 }
 
-DRV8835::Odometry DRV8835::estimateOdometry()
+DRV8835::Odometry DRV8835::estimateOdometry(std::optional<double> absVelocity)
 {
 	auto now = std::chrono::system_clock::now();
-	double t = std::chrono::duration<double>(now - lastEstimationTime).count();
-	double xDiff = lastTwist.v - odometry.v;
-	double steeringDiff = (lastTwist.a == 0 ? 0 : lastTwist.a < 0 ? -STEERING_LIMIT : STEERING_LIMIT) - steeringAngle;
-	steeringAngle += (steeringDiff < 0 ? -1 : 1) * std::min(std::abs(steeringDiff), STEERING_SPEED * t);
+	double dt = std::chrono::duration<double>(now - lastEstimationTime).count();
+	double dv = lastTwist.v - driveVelocity;
+	double dw = (lastTwist.w == 0 ? 0 : lastTwist.w < 0 ? -STEERING_LIMIT : STEERING_LIMIT) - steeringAngle;
+	driveVelocity += (dv < 0 ? -1 : 1) * std::min(std::abs(dv), MAX_ACCELERATION * dt);
+	steeringAngle += (dw < 0 ? -1 : 1) * std::min(std::abs(dw), MAX_STEERING_VELOCITY * dt);
 	double circleRadius = WHEEL_BASE / std::tan(steeringAngle);
 
-	odometry.v += (xDiff < 0 ? -1 : 1) * std::min(std::abs(xDiff), X_ACCELERATION * t);
-	odometry.a = odometry.v / circleRadius;
-	odometry.yaw += odometry.a * t;
-	odometry.x += odometry.v * std::cos(odometry.yaw) * t;
-	odometry.y += odometry.v * std::sin(odometry.yaw) * t;
+	odometry.v = absVelocity ? *absVelocity * (driveVelocity < 0 ? -1 : 1) : driveVelocity;
+	odometry.w = odometry.v / circleRadius;
+	odometry.yaw += odometry.w * dt;
+	odometry.x += odometry.v * std::cos(odometry.yaw) * dt;
+	odometry.y += odometry.v * std::sin(odometry.yaw) * dt;
 
 	lastEstimationTime = now;
 	return odometry;
@@ -95,15 +96,15 @@ void DRV8835::update()
 	}
 }
 
-void DRV8835::drive(double x, double a)
+void DRV8835::drive(double x, double s)
 {
 	lastTwistTime = std::chrono::system_clock::now();
-	lastTwist = {x, a};
+	lastTwist = {x, s};
 
-	return phaseEnableMode ? drivePhEn(x, a) : driveInIn(x, a);
+	return phaseEnableMode ? drivePhEn(x, s) : driveInIn(x, s);
 }
 
-void DRV8835::drivePhEn(double x, double a)
+void DRV8835::drivePhEn(double x, double s)
 {
 	if (x < -X_STOP_VELOCITY)
 	{
@@ -120,12 +121,12 @@ void DRV8835::drivePhEn(double x, double a)
 		pwm.setDuty(pwmIds[DRIVE], 0);
 	}
 
-	if (a < -A_STOP_VELOCITY)
+	if (s < -S_STOP_VELOCITY)
 	{
 		gpio.togglePin(gpioPins[LR_SELECT], false);
 		gpio.togglePin(gpioPins[STEER_ON], true);
 	}
-	else if (a > A_STOP_VELOCITY)
+	else if (s > S_STOP_VELOCITY)
 	{
 		gpio.togglePin(gpioPins[LR_SELECT], true);
 		gpio.togglePin(gpioPins[STEER_ON], true);
@@ -136,7 +137,7 @@ void DRV8835::drivePhEn(double x, double a)
 	}
 }
 
-void DRV8835::driveInIn(double x, double a)
+void DRV8835::driveInIn(double x, double s)
 {
 	if (x < -X_STOP_VELOCITY)
 	{
@@ -154,12 +155,12 @@ void DRV8835::driveInIn(double x, double a)
 		pwm.setDuty(pwmIds[DRIVE_BACKWARD], 1);
 	}
 
-	if (a < -A_STOP_VELOCITY)
+	if (s < -S_STOP_VELOCITY)
 	{
 		gpio.togglePin(gpioPins[LEFT], true);
 		gpio.togglePin(gpioPins[RIGHT], false);
 	}
-	else if (a > A_STOP_VELOCITY)
+	else if (s > S_STOP_VELOCITY)
 	{
 		gpio.togglePin(gpioPins[LEFT], false);
 		gpio.togglePin(gpioPins[RIGHT], true);

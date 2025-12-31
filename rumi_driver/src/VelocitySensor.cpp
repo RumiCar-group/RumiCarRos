@@ -43,11 +43,11 @@ VelocitySensor::~VelocitySensor()
 	}
 }
 
-double VelocitySensor::getVelocity() const
+std::optional<double> VelocitySensor::getAbsVelocity() const
 {
 	if (!hall)
 	{
-		return 0;
+		return std::nullopt;
 	}
 	double period = hall->getPeriod();
 	if (period == 0)

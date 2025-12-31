@@ -24,11 +24,11 @@ class DRV8835
 	enum { DRIVE, DRIVE_FORWARD = 0, DRIVE_BACKWARD = 1 };
 	struct Twist
 	{
-		double v, a;
+		double v, w;  /// velocity and angular velocity
 	};
 	struct Odometry : Twist
 	{
-		double x, y, yaw;
+		double x, y, yaw;  /// 2D pose
 	};
 
 	RumiGpio& gpio;
@@ -39,6 +39,7 @@ class DRV8835
 	TimePoint lastEstimationTime;
 	TimePoint lastTwistTime;
 	Twist lastTwist = {0, 0};
+	double driveVelocity = 0;
 	double steeringAngle = 0;
 	Odometry odometry = {0, 0, 0, 0, 0};
 
@@ -61,7 +62,7 @@ public:
 	/**
 	 * @return odometry estimated basing on drive command
 	 */
-	Odometry estimateOdometry();
+	Odometry estimateOdometry(std::optional<double> absVelocity = std::nullopt);
 
 	/**
 	 * Allows stopping robot if no drive command is received for some time.
@@ -70,11 +71,11 @@ public:
 
 	/**
      * @param x [m/s] robot velocity
-     * @param a [%] left angle in % of max angle (right angle if negative)
+     * @param s [%] left angle in % of max angle (right angle if negative)
      */
-	void drive(double x, double a);
+	void drive(double x, double s);
 
 private:
-	void drivePhEn(double x, double a);
-	void driveInIn(double x, double a);
+	void drivePhEn(double x, double s);
+	void driveInIn(double x, double s);
 };
