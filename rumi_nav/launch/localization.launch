@@ -1,6 +1,4 @@
 <launch>
-    <include file="$(find-pkg-share rumi_nav)/launch/lidar.launch"/>
-
     <node pkg="nav2_lifecycle_manager" exec="lifecycle_manager" name="lifecycle_manager" output="screen">
         <param name="autostart" value="true"/>
         <param name="node_names" value="['map_server', 'amcl']"/>

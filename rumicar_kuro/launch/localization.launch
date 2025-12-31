@@ -1,0 +1,4 @@
+<launch>
+    <include file="$(find-pkg-share rumicar_kuro)/launch/lidar.launch"/>
+    <include file="$(find-pkg-share rumi_nav)/launch/localization.launch"/>
+</launch>

@@ -1,5 +1,4 @@
 <launch>
-    <include file="$(find-pkg-share rumi_nav)/launch/lidar.launch"/>
     <include file="$(find-pkg-share slam_toolbox)/launch/online_async_launch.py">
         <arg name="slam_params_file" value="$(find-pkg-share rumi_nav)/config/slam.yaml"/>
     </include>

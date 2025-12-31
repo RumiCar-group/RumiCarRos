@@ -1,0 +1,22 @@
+<launch>
+    <!--
+        Laser scan based odometry.
+        Requires rf2o_laser_odometry package.
+        It is used to debug wheel odometry, but too heavy to run instead of it.
+    -->
+
+    <arg name="publish_tf" default="false" description="Whether to publish the odom->base_link transform"/>
+
+    <include file="$(find-pkg-share rumicar_kuro)/launch/lidar.launch"/>
+
+    <node pkg="rf2o_laser_odometry" exec="rf2o_laser_odometry_node" name="rf2o_laser_odometry" output="screen">
+        <param name="laser_scan_topic" value="scan"/>
+        <param name="odom_topic" value="odom_rf2o"/>
+        <param name="init_pose_from_topic" value="odom"/>
+
+        <param name="publish_tf" value="$(var publish_tf)"/>
+        <param name="base_frame_id" value="base_footprint"/>
+        <param name="odom_frame_id" value="odom"/>
+        <param name="freq" value="10.0"/>
+    </node>
+</launch>

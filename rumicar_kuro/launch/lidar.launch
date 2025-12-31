@@ -9,6 +9,6 @@
 
     <!-- static tfs -->
     <node pkg="tf2_ros" exec="static_transform_publisher" name="base_lidar_tf"
-          args="--x 0.038 --z 0.045 --frame-id base_link --child-frame-id laser_frame"
+          args="--x 0.038 --z 0.045 --yaw -0.18 --frame-id base_link --child-frame-id laser_frame"
     />
 </launch>
