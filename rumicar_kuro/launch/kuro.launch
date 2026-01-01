@@ -7,7 +7,7 @@
     </include>
 
     <!-- static tfs -->
-    <node pkg="tf2_ros" exec="static_transform_publisher" name="base_base_tf"
+    <node pkg="tf2_ros" exec="static_transform_publisher" name="map_odom_tf_empty"
           args="--frame-id map --child-frame-id odom"
     />
     <node pkg="tf2_ros" exec="static_transform_publisher" name="base_base_tf"

@@ -25,7 +25,11 @@ ros2 launch rumi_nav mapping.launch
 
 Saving map:
 ```
+# for amcl
 ros2 run nav2_map_server map_saver_cli -f ~/.ros/map
+
+# for slam_toolbox
+ros2 service call /slam_toolbox/serialize_map slam_toolbox/srv/SerializePoseGraph "{filename: '.ros/map'}"
 ```
 
 ## Navigation

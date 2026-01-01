@@ -1,5 +1,39 @@
 amcl:
   ros__parameters:
-    update_min_a: 0.01  # 1 cm
-    update_min_d: 0.01  # 0.5 deg
-    sigma_hit: 1.0      # Broadens the likelihood of matching
+    bond_timeout: 20.0   # increase to prevent stop when CPU is heavy
+
+
+    # --- Critical Fixes ---
+    laser_min_range: 0.15          # Increased to 15cm to ensure it's not seeing the car's nose
+    z_hit: 0.95                    # Heavily favor the map
+    z_rand: 0.01                   # Almost zero out random noise to force convergence
+
+    # --- The "Search" Radius ---
+    # This increases the "attraction" to walls. If your initial pose is even
+    # slightly off, a small value here prevents convergence.
+    laser_likelihood_max_dist: 5.0 # Increased from 2.0
+
+    # --- Resolution Fix ---
+    # If your map resolution is 0.05, sigma_hit should be ~0.1 to 0.2.
+    # A value too small makes the 'hit' area too narrow to find.
+    sigma_hit: 0.15                # Changed from 0.1
+
+    # --- Particle Behavior ---
+    min_particles: 1000            # Increased from 500 to give more 'chances' to find a match
+    max_particles: 3000            # Increased from 2000
+    update_min_d: 0.01             # 1 cm
+    update_min_a: 0.01             # ~0.6 deg
+
+    # Translational noise
+    alpha1: 0.2   # rot → rot
+    alpha2: 0.2   # trans → rot
+
+    # Rotational noise (usually worst on small cars)
+    alpha3: 0.4   # trans → trans
+    alpha4: 0.4   # rot → trans
+
+    # Strafing (must be zero for car-like robots)
+    alpha5: 0.0
+
+    recovery_alpha_slow: 0.001
+    recovery_alpha_fast: 0.1

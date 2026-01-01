@@ -5,14 +5,15 @@ slam_toolbox:
     # Toolbox
     map_update_interval: 1.0        # [s]
     max_laser_range: 12.0           # [m]
-    minimum_travel_distance: 0.01   # [m] each distance the pose is updated
-    minimum_travel_heading: 0.02    # [rad] ~1 deg, each angle the pose is updated
+    minimum_time_interval: 0.2      # [s] not sure if this works, but it should increase matching interval
+    minimum_travel_distance: 0.0    # [m] each distance the pose is updated
+    minimum_travel_heading: 0.0     # [rad] each angle the pose is updated
     resolution: 0.025               # [m] map resolution - roughly wheel diameter
+    scan_queue_size: 5              # number of messages in queue
     stack_size_to_use: 40000000     # [B] 40 MB max limit
     tf_buffer_duration: 10.0        # [s] duration to store TF messages for lookup
     transform_publish_period: 0.1   # [s] 10 Hz - same as lidar
     transform_timeout: 0.5          # [s] tf lookup timeout
-    scan_queue_size: 5              # number of messages in queue
 
     # Matcher
     angle_variance_penalty: 0.3                     # Bigger -> trust odom, less -> trust lidar
@@ -20,7 +21,7 @@ slam_toolbox:
     correlation_search_space_resolution: 0.01       # Search grid size
     correlation_search_space_smear_deviation: 0.03  # Sharper matching
     distance_variance_penalty: 0.3                  # Bigger -> trust odom, less -> trust lidar
-    do_loop_closing: true                           # Enable global error correction by closing loops
+    do_loop_closing: false                          # !!!
     link_match_minimum_response_fine: 0.2           # Don't accept "blurry" matches
     link_scan_maximum_distance: 1.0                 # Max distance between linked nodes in the pose graph
     loop_search_maximum_distance: 6.0               # Radius to search for loop closure candidates
@@ -28,3 +29,8 @@ slam_toolbox:
     scan_buffer_size: 3                             # Number of scans to keep in memory for local matching
     use_scan_barycenter: false                      # Match using the scan center of mass instead of laser origin
     use_scan_matching: true                         # Refine odometry by aligning lidar scans to the existing map
+
+    # Localization
+    map_file_name: "/home/pi/.ros/map"
+    mode: localization
+    throttle_scans: 1  # speedup processing
